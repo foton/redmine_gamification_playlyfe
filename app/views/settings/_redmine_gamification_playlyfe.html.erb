@@ -1,0 +1,29 @@
+
+<% 
+#@settings is hash delivered by redmine for plugins configuration
+%>
+
+<p>
+<%= label_tag("settings_playlyfe_client_id", "Playlyfe client ID") %>
+<%= text_field_tag "settings[playlyfe_client_id]", @settings["playlyfe_client_id"], size: 100 %> 
+</p>
+<p>
+<%= label_tag("settings_playlyfe_client_secret","Playlyfe client SECRET") %>
+<%= text_field_tag "settings[playlyfe_client_secret]", @settings["playlyfe_client_secret"], size: 100 %>
+</p>
+
+<% if @settings["playlyfe_client_secret"].present? 
+  conn= ::PlaylyfeClient::V2::Connection.new(version: "v2",
+        client_id: @settings["playlyfe_client_id"],
+        client_secret: @settings["playlyfe_client_secret"],
+        type: "client")
+  game=conn.game 
+%>
+  <p>Game: <%= game.id %> </p>
+ 
+<% end %>
+
+
+
+
+    
