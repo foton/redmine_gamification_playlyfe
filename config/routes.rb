@@ -1,4 +1,5 @@
   get   'gamification' => 'gamification#index'
+  get   'gamification/my_scores' => 'gamification#my_scores'
   get   'gamification/player/:id' => 'gamification#player'
   get   'gamification/leaderboards' => 'gamification#leaderboards'
   get   'gamification/actions' => 'gamification#actions'

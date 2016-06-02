@@ -10,6 +10,10 @@ class GamificationPlaylyfeRouteTest < ActionController::TestCase
     assert_routing "/gamification/player/1", controller: "gamification", action: "player", id: "1"
   end
 
+  def test_player_page 
+    assert_routing "/gamification/my_scores", controller: "gamification", action: "my_scores"
+  end
+
   def test_actions_page 
     assert_routing "/gamification/actions", controller: "gamification", action: "actions"
   end

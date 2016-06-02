@@ -13,12 +13,14 @@ Redmine::Plugin.register :redmine_gamification_playlyfe do
 
   #permission :redmine_gamification_plugin, {:redmine_gamification_plugin => [:project]}, :public => true
 
- menu :top_menu, :redmine_gamification_playlyfe, {controller: 'gamification', action: 'index'}, :caption => "GAMIS"
+  menu :top_menu, :redmine_gamification_playlyfe, {controller: 'gamification', action: 'index'}, :caption => I18n.t("gamification.plugin_name")
  # menu :project_menu, :project_gamification, {controller: 'gamification', action: 'project'}, caption: 'Status', param: :project_id 
   
-  #permission :redmine_gamification_playlyfe, { :playlyfe => [:index] }, :public => true
-  #permission :view_polls, :polls => :index
-  #permission :vote_polls, :polls => :vote
+  #permission :view_scores, { :gamification => [:index, :leaderboards, :my] }, :require => :loggedin
+  #permission :view_scores_of_others, { :gamification => [:player] }, :require => :loggedin
+  #permission :direct_play_action, { :gamification => [:actions, :play_action] }, :require => :loggedin
+  #permission :configure, { :gamification => [:configuration, :set_configuration] }, :require => :loggedin
+    
 
   settings partial: 'settings/redmine_gamification_playlyfe', default: {}
 
@@ -26,6 +28,6 @@ Redmine::Plugin.register :redmine_gamification_playlyfe do
   #http://www.redmine.org/projects/redmine/wiki/Plugin_Tutorial#Extending-the-application-menu
 end
 
-# Rails.configuration.to_prepare do
-#   RedmineGamification::Playlyfe.setup
-# end
+ Rails.configuration.to_prepare do
+   Gamification.setup
+ end

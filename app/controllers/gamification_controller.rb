@@ -1,7 +1,9 @@
 class GamificationController < ApplicationController
+  
+  before_filter :require_player_or_admin  #, only: [:index, :leaderboards, :my_scores]
+  before_filter :require_admin, except: [:index, :leaderboards, :my_scores]
 
   before_filter :set_game
-  before_filter :manager_only, except: [:index, :leaderboards, :player]
 
   def index
   end
@@ -9,8 +11,14 @@ class GamificationController < ApplicationController
   def leaderboards
   end
 
+  def my_scores
+    #@player=Player.find(User.current.id)
+    render "player"
+  end
+    
   def player
      #find_player
+     #@player=Player.find(params[:id].to_i)
      #check permission
   end
 
@@ -44,9 +52,21 @@ class GamificationController < ApplicationController
       #   type: "client"
       #   )
       # @game=conn.game 
+    end 
+
+    def game
+      @game 
     end  
 
-    def manager_only
-    end  
+    def require_player_or_admin
+      return unless require_login
+      if User.current.admin? || User.current.player?
+        return true
+      else  
+        render_403
+        return false
+      end
+    end
+
 end  
 
