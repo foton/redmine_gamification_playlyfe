@@ -9,10 +9,21 @@ class GamificationControllerTest < ActionController::TestCase
     @player=Gamification::Player.create!(user_id: @user.id, player_id: "player2")
   end  
 
+  def test_should_require_signed_in_user
+    get :index
+    assert_response :found   #sign_in needed
+  end
+    
+  def test_no_index_for_nonplayer
+    current_user_set_to(4)
+    get :index
+    assert_response :forbidden
+  end
+
   def test_index
     current_user_set_to(:player)
     get :index
-    #assert_response :ok
+    assert_response :ok
     assert_template "gamification/index"
   end
 
@@ -99,7 +110,7 @@ class GamificationControllerTest < ActionController::TestCase
     if who == :admin
       session[:user_id] = 1
     elsif who == :player
-      session[:user_id] = 2  
+      session[:user_id] = @player.user_id
     elsif who.kind_of?(Integer)  
       session[:user_id] = who
     else
