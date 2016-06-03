@@ -129,8 +129,12 @@ class GamificationControllerTest < ActionController::TestCase
 
     assert assigns(:actions).present?
     assert_equal @game.actions.to_a.size, assigns(:actions).to_a.size
-    assert assigns(:available_hooks).present?
-    assert_equal Gamification::HookToAction.available_hooks.size, assigns(:available_hooks).size
+    #assert assigns(:available_hooks).present?
+    #assert_equal Gamification::HookToAction.available_hooks.size, assigns(:available_hooks).size
+    assert assigns(:event_sources).present?
+    assert_equal Gamification::HookToAction.event_sources, assigns(:event_sources)
+    assert assigns(:event_names).present?
+    assert_equal Gamification::HookToAction.event_names, assigns(:event_names)
     refute assigns(:hooks_to_actions).nil?
     assert_equal Gamification::HookToAction.all.size, assigns(:hooks_to_actions).size
   end

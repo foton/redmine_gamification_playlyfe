@@ -72,3 +72,17 @@ def fake_game
   @fake_game  
 end
 
+
+def   fixtures_for_creating_issues
+  fixtures :projects, :issues, :users,
+    :members, :member_roles, :roles, :trackers, :projects_trackers,
+    :issue_statuses, :enumerations
+end
+
+def create_issue
+  Issue.create!(:project_id => 1, :tracker_id => 1, :author_id => 3,
+                      :status_id => 1, :priority => IssuePriority.all.first,
+                      :subject => 'test_create',
+                      :description => 'IssueTest#test_create', :estimated_hours => '1:30')
+end  
+

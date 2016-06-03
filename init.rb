@@ -3,6 +3,26 @@
 #developed with big help form
 #https://jkraemer.net/2015/11/how-to-create-a-redmine-plugin
 #http://www.redmine.org/projects/redmine/wiki/Plugin_Tutorial#Extending-the-application-menu
+#https://github.com/edavis10/redmine_kanban
+
+require 'redmine'
+
+# Patches to the Redmine core.
+ActionDispatch::Callbacks.to_prepare do
+  require_dependency 'issue'
+  # Guards against including the module multiple time (like in tests)
+  # and registering multiple callbacks
+  unless Issue.included_modules.include? Gamification::IssuePatch
+    Issue.send(:include, Gamification::IssuePatch)
+  end
+
+  unless User.included_modules.include? Gamification::UserPatch
+    User.send(:include, Gamification::UserPatch)
+  end
+
+end
+
+
 
 Redmine::Plugin.register :redmine_gamification_playlyfe do
   name 'Plugin for gamification using Playlyfe service'
@@ -28,6 +48,4 @@ Redmine::Plugin.register :redmine_gamification_playlyfe do
   settings partial: 'settings/redmine_gamification_playlyfe', default: {}
 end
 
- Rails.configuration.to_prepare do
-   Gamification.setup
- end
+ 

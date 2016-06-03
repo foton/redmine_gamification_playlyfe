@@ -1,7 +1,4 @@
 module Gamification
-  def self.setup
-    UserPatch.apply
-  end  
 
   def self.game
     @game||=Gamification::Playlyfe.game
