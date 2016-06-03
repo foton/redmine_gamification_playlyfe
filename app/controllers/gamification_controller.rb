@@ -5,6 +5,8 @@ class GamificationController < ApplicationController
 
   before_filter :set_game
 
+  attr_accessor :game  #for testing of course
+
   def index
   end
       
@@ -25,26 +27,38 @@ class GamificationController < ApplicationController
   #manager_only actions
 
   def actions
-
+    @actions=game.actions
+    @game_players=game.players
   end
 
   def play_action
-    #find_player
-    #play action  
-    redirect_to gamification_actions_url
+    if (set_player && set_action)
+      @player.play(@action)
+      flash[:notice] = "Action '#{@action.id}' was successfully played by player '#{@player.id}"
+    end  
+    render "actions"
   end
 
   def configuration
+    @game_players=game.players
+    @users_to_players=Gamification::UserToPlayer.all
+    @users=User.all
+
+    @actions=game.actions
+    @available_hooks=Gamification::HookToAction.available_hooks
+    @hooks_to_actions=Gamification::HookToAction.all
   end
 
   def set_configuration
-    #set config
+    update_configuration
+    flash[:notice]="Configuration updated"
     redirect_to gamification_configuration_url
   end  
 
   private
 
     def set_game
+      unless defined?(@game)
       # conn= ::PlaylyfeClient::V2::Connection.new(
       #   version: "v2",
       #   client_id: @settings["playlyfe_client_id"],
@@ -52,10 +66,27 @@ class GamificationController < ApplicationController
       #   type: "client"
       #   )
       # @game=conn.game 
+      end
     end 
+   
+    def set_player
+      @player=game.players.find(params[:player_id])
+      if @player.blank?
+        flash[:error]="Player '#{params[:player_id]}' not found!"
+        return false
+      else  
+        return true
+      end
+    end   
 
-    def game
-      @game 
+    def set_action
+      @action=game.actions.find(params[:action_id])
+      if @action.blank?
+        flash[:error]="Action '#{params[:action_id]}' not found!"
+        return false
+      else  
+        return true
+      end
     end  
 
     def require_player_or_admin
@@ -67,6 +98,9 @@ class GamificationController < ApplicationController
         return false
       end
     end
+
+    def update_configuration
+    end  
 
 end  
 

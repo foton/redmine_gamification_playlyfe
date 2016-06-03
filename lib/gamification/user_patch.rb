@@ -9,7 +9,7 @@ module Gamification
     module InstanceMethods
 
       def player
-        Gamification::Player.where(user_id: self.id).first
+        Gamification::UserToPlayer.where(user_id: self.id).first
       end
 
       def player?

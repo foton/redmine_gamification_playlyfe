@@ -1,5 +1,9 @@
 #require_dependency 'redmine_gamification_playlyfe'
 
+#developed with big help form
+#https://jkraemer.net/2015/11/how-to-create-a-redmine-plugin
+#http://www.redmine.org/projects/redmine/wiki/Plugin_Tutorial#Extending-the-application-menu
+
 Redmine::Plugin.register :redmine_gamification_playlyfe do
   name 'Plugin for gamification using Playlyfe service'
   url 'https://github.com/foton/redmine_gamification_playlyfe'
@@ -21,11 +25,7 @@ Redmine::Plugin.register :redmine_gamification_playlyfe do
   #permission :direct_play_action, { :gamification => [:actions, :play_action] }, :require => :loggedin
   #permission :configure, { :gamification => [:configuration, :set_configuration] }, :require => :loggedin
     
-
   settings partial: 'settings/redmine_gamification_playlyfe', default: {}
-
-
-  #http://www.redmine.org/projects/redmine/wiki/Plugin_Tutorial#Extending-the-application-menu
 end
 
  Rails.configuration.to_prepare do

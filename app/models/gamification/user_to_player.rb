@@ -1,6 +1,5 @@
 module Gamification
   class UserToPlayer < ActiveRecord::Base
-    has_many :users #many users can be linked to one player
-
+    self.table_name="users_to_players"
   end
 end  

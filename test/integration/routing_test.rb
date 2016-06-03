@@ -7,7 +7,7 @@ class GamificationPlaylyfeRouteTest < ActionController::TestCase
   end
 
   def test_player_page 
-    assert_routing "/gamification/player/1", controller: "gamification", action: "player", id: "1"
+    assert_routing "/gamification/player/1", controller: "gamification", action: "player", player_id: "1"
   end
 
   def test_player_page 
@@ -19,7 +19,7 @@ class GamificationPlaylyfeRouteTest < ActionController::TestCase
   end
 
   def test_play_action_page 
-    assert_routing({ method: 'post', path: "/gamification/actions/action1/play"}, {controller: "gamification", action: "play_action", id: "action1"})
+    assert_routing({ method: 'post', path: "/gamification/actions/action1/play"}, {controller: "gamification", action: "play_action", action_id: "action1"})
   end
 
   def test_leaderboards_page 
