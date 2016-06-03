@@ -1,6 +1,6 @@
 require File.expand_path('../../test_helper', __FILE__)
 
-class GamificationPlaylyfeRouteTest < ActionController::TestCase
+class GamificationRouteTest < ActionController::TestCase
   
   def test_default_page 
     assert_routing "/gamification", controller: "gamification", action: "index"

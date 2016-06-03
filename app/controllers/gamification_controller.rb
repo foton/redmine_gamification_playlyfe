@@ -2,11 +2,7 @@ class GamificationController < ApplicationController
   
   before_filter :require_player_or_admin  #, only: [:index, :leaderboards, :my_scores]
   before_filter :require_admin, except: [:index, :leaderboards, :my_scores]
-
-  before_filter :set_game
-
-  attr_accessor :game  #for testing of course
-
+  
   def index
   end
       
@@ -57,16 +53,8 @@ class GamificationController < ApplicationController
 
   private
 
-    def set_game
-      unless defined?(@game)
-      # conn= ::PlaylyfeClient::V2::Connection.new(
-      #   version: "v2",
-      #   client_id: @settings["playlyfe_client_id"],
-      #   client_secret: @settings["playlyfe_client_secret"],
-      #   type: "client"
-      #   )
-      # @game=conn.game 
-      end
+    def game
+      @game||=Gamification.game
     end 
    
     def set_player

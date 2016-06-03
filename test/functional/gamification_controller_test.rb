@@ -7,7 +7,7 @@ class GamificationControllerTest < ActionController::TestCase
   def setup
     @user=User.find(2) 
     @player=Gamification::UserToPlayer.create!(user_id: @user.id, player_id: "player2")
-    @game=fake_game!
+    @game=fake_game
   end  
 
   def test_should_require_signed_in_user
@@ -59,8 +59,9 @@ class GamificationControllerTest < ActionController::TestCase
   def test_actions_for_admin
     current_user_set_to(:admin)
     stub_game_with(@game)
-
+    
     get :actions
+      
     assert_response :ok
     assert_template "gamification/actions"
 
@@ -182,55 +183,11 @@ class GamificationControllerTest < ActionController::TestCase
       end  
     end  
 
-    def fake_game!
-      unless defined?(@@game)
-        Struct.new("Player", :id, :name, :game, :scores) do
-          def play(action)
-            game.action_played(action.id)
-            true
-          end  
-        end  
-        Struct.new("Action", :id, :name)
-
-        Struct.new("Collection", :to_a) do
-          def find(id)
-            to_a.detect {|item| item.id == id}
-          end  
-        end
-
-        actions=Struct::Collection.new([
-          Struct::Action.new("action1", "Action 1"),
-          Struct::Action.new("action2", "Action 2"),
-          Struct::Action.new("action3", "Action 3"),
-          Struct::Action.new("action4", "Action 4"),
-        ])
-
-        Struct.new("Game", :title, :players, :actions, :leaderboards) do
-          def actions_played
-            @actions_played||=[]
-          end
-          
-          def action_played(action_id)
-            actions_played << action_id
-          end
-        end  
-
-        @@game = Struct::Game.new("test_game", [] , actions, [])
-
-        players=Struct::Collection.new([
-          Struct::Player.new("player1", "Player 1", @@game, {}),
-          Struct::Player.new("player2", "Player 2", @@game, {}),
-          Struct::Player.new("player3", "Player 3", @@game, {}),
-        ])
-        @@game.players=players
-
-      end
-      @@game  
-    end
+   
     
-    def stub_game_with(s_game)
-      @controller.game=s_game
-    end  
+    # def stub_game_with(s_game)
+    #   @controller.game=s_game
+    # end  
 
 
 end
