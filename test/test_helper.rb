@@ -58,6 +58,7 @@ def fake_game
     @fake_game.actions=Struct::Collection.new([
       Struct::Action.new("issue_created", "Issue created", @fake_game),
       Struct::Action.new("issue_commented", "Issue commented", @fake_game),
+      Struct::Action.new("issue_definition_updated", "Issue title od description updated", @fake_game),
       Struct::Action.new("issue_status_change", "Isssue status change", @fake_game),
       Struct::Action.new("issue_code_review_done", "Issue CR done", @fake_game),
       Struct::Action.new("issue_closed", "Issue closed", @fake_game),

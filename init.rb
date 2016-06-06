@@ -16,6 +16,10 @@ ActionDispatch::Callbacks.to_prepare do
     Issue.send(:include, Gamification::IssuePatch)
   end
 
+  unless Journal.included_modules.include? Gamification::JournalPatch
+    Journal.send(:include, Gamification::JournalPatch)
+  end
+
   unless User.included_modules.include? Gamification::UserPatch
     User.send(:include, Gamification::UserPatch)
   end
