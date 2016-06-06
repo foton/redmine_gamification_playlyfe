@@ -41,7 +41,8 @@ class GamificationController < ApplicationController
     @users=User.all
 
     @actions=game.actions
-    @available_hooks=Gamification::HookToAction.available_hooks
+    @event_sources=Gamification::HookToAction.event_sources
+    @event_names=Gamification::HookToAction.event_names
     @hooks_to_actions=Gamification::HookToAction.all
   end
 

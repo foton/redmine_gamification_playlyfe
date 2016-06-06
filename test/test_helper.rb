@@ -56,10 +56,13 @@ def fake_game
     @fake_game = Struct::Game.new("test_game", [] , [], [])
 
     @fake_game.actions=Struct::Collection.new([
-      Struct::Action.new("action1", "Action 1", @fake_game),
-      Struct::Action.new("action2", "Action 2", @fake_game),
-      Struct::Action.new("action3", "Action 3", @fake_game),
-      Struct::Action.new("action4", "Action 4", @fake_game),
+      Struct::Action.new("issue_created", "Issue created", @fake_game),
+      Struct::Action.new("issue_commented", "Issue commented", @fake_game),
+      Struct::Action.new("issue_status_change", "Isssue status change", @fake_game),
+      Struct::Action.new("issue_code_review_done", "Issue CR done", @fake_game),
+      Struct::Action.new("issue_closed", "Issue closed", @fake_game),
+      Struct::Action.new("wiki_updated", "Wiki update", @fake_game),
+      Struct::Action.new("commit_to_repo", "Commit to repository", @fake_game),
     ])
 
     @fake_game.players=Struct::Collection.new([
@@ -79,8 +82,17 @@ def   fixtures_for_creating_issues
     :issue_statuses, :enumerations
 end
 
+def player
+  @player
+end  
+
+def create_player(user, player_id)
+  Gamification::UserToPlayer.create!(user_id: user.id, player_id: player_id)
+  @player=user
+end  
+
 def create_issue
-  Issue.create!(:project_id => 1, :tracker_id => 1, :author_id => 3,
+  Issue.create!(:project_id => 1, :tracker_id => 1, :author_id => player.id,
                       :status_id => 1, :priority => IssuePriority.all.first,
                       :subject => 'test_create',
                       :description => 'IssueTest#test_create', :estimated_hours => '1:30')

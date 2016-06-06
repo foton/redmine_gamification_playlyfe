@@ -8,6 +8,7 @@ class GamificationControllerTest < ActionController::TestCase
     @user=User.find(2) 
     @player=Gamification::UserToPlayer.create!(user_id: @user.id, player_id: "player2")
     @game=fake_game
+    stub_game_with(@game)
   end  
 
   def test_should_require_signed_in_user
@@ -58,7 +59,6 @@ class GamificationControllerTest < ActionController::TestCase
 
   def test_actions_for_admin
     current_user_set_to(:admin)
-    stub_game_with(@game)
     
     get :actions
       
@@ -74,25 +74,23 @@ class GamificationControllerTest < ActionController::TestCase
 
   def test_successfully_play_action
     current_user_set_to(:admin)
-    stub_game_with(@game)
     played_actions=@game.actions_played.size
 
-    post :play_action, {action_id: "action1", player_id: "player1"}
+    post :play_action, {action_id: "issue_commented", player_id: "player1"}
     
     assert_response :ok
     assert_template "gamification/actions"
-    assert_equal "Action 'action1' was successfully played by player 'player1", flash[:notice]
+    assert_equal "Action 'issue_commented' was successfully played by player 'player1", flash[:notice]
     assert flash[:error].blank?
     assert_equal played_actions+1, @game.actions_played.size
-    assert_equal "action1", @game.actions_played.last
+    assert_equal "issue_commented", @game.actions_played.last
   end
 
   def test_play_action_with_no_player
     current_user_set_to(:admin)
-    stub_game_with(@game)
     played_actions=@game.actions_played.size 
 
-    post :play_action, {action_id: "action1", player_id: "player100"}
+    post :play_action, {action_id: "issue_commented", player_id: "player100"}
     assert_response :ok
     assert_template "gamification/actions"
     assert_equal "Player 'player100' not found!", flash[:error]
@@ -101,7 +99,6 @@ class GamificationControllerTest < ActionController::TestCase
 
   def test_play_action_with_no_action
     current_user_set_to(:admin)
-    stub_game_with(@game)
     played_actions=@game.actions_played.size
     
     post :play_action, {action_id: "action100", player_id: "player1"}
@@ -113,7 +110,6 @@ class GamificationControllerTest < ActionController::TestCase
 
   def test_configuration_for_admin
     current_user_set_to(:admin)
-    stub_game_with(@game)
  
     get :configuration
           

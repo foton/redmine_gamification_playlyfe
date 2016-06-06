@@ -3,18 +3,22 @@ require File.expand_path('../../test_helper', __FILE__)
 class HookToActionTest < ActiveSupport::TestCase
   fixtures_for_creating_issues
   
+  def setup
+    create_player(User.find(3), "player1")
+  end  
+
   def test_play_action
     hook=Gamification::HookToAction.new(
         {
           event_source: Gamification::HookToAction::EVENT_SOURCE_ISSUE,
           event_name: Gamification::HookToAction::EVENT_NAME_ON_UPDATE,
-          action_id: "action1"
+          action_id: "issue_created"
         }
       )
     stub_game_with(fake_game)
     played_actions=fake_game.actions_played.size
     player=fake_game.players.to_a.first
-
+    
     hook.play_action(player)
 
     assert_equal played_actions+1, fake_game.actions_played.size
@@ -39,9 +43,9 @@ class HookToActionTest < ActiveSupport::TestCase
 
   def test_process_event_from_issue_on_create
     stub_game_with(fake_game)
-    hook1=create_issue_hook_on(:create, "action1")
-    hook2=create_issue_hook_on(:create, "action2")
-    hook3=create_issue_hook_on(:update, "action3")
+    hook1=create_issue_hook_on(:create, "issue_created")
+    hook2=create_issue_hook_on(:create, "issue_status_change")
+    hook3=create_issue_hook_on(:update, "issue_commented")
     played_actions=fake_game.actions_played.size
     assert_equal 0, played_actions
 
@@ -52,13 +56,31 @@ class HookToActionTest < ActiveSupport::TestCase
     assert_equal hook2.action_id, fake_game.actions_played.last 
   end
 
+  def test_process_event_from_issue_on_update_without_status_change
+    # stub_game_with(fake_game)
+    # hook1=create_issue_hook_on(:create, "issue_created")
+    # hook2=create_issue_hook_on(:update, "issue_status_change")
+    # hook3=create_issue_hook_on(:update, "issue_commented")
+    # issue = create_issue
+    # played_actions=fake_game.actions_played.size
+    # assert_equal 1, played_actions
+
+    # issue. 
+    
+
+    # assert_equal played_actions+2, fake_game.actions_played.size
+    # assert_equal hook1.action_id, fake_game.actions_played[-2]
+    # assert_equal hook2.action_id, fake_game.actions_played.last 
+  end
+
+
   private
 
     def create_issue_hook_on(event_name, action_id)
       options={
         event_source: Gamification::HookToAction::EVENT_SOURCE_ISSUE,
         event_name: Gamification::HookToAction::EVENT_NAME_ON_CREATE,
-        action_id: "action1"
+        action_id: action_id
       }
       
       case event_name
@@ -70,6 +92,6 @@ class HookToActionTest < ActiveSupport::TestCase
         raise "Unrecognized event name symbol"  
       end  
       
-      Gamification::HookToAction.new(options)
+      Gamification::HookToAction.create!(options)
     end
 end
