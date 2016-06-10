@@ -26,7 +26,7 @@ module Gamification
     module InstanceMethods
        
       def process_gamification_on_create
-        Gamification::HookToAction.process_commented_issue(self)
+        Gamification::EventToAction.process_commented_issue(self)
       end
         
       private :process_gamification_on_create  

@@ -1,6 +1,6 @@
 module Gamification
-  class HookToAction < ActiveRecord::Base
-    self.table_name="hooks_to_actions"
+  class EventToAction < ActiveRecord::Base
+    self.table_name="events_to_actions"
 
     EVENT_SOURCE_ISSUE="issue"
 
@@ -18,7 +18,9 @@ module Gamification
       @@event_names ||= self.constants(false).select{|c| c=~/EVENT_NAME_.+/}.map{|c| self.module_eval c.to_s}.sort{|a,b| a<=>b}
     end
 
-
+    def <=>(other)
+      if (self.event_source)
+    end  
 
     def self.available_hooks
      #according to http://www.redmine.org/projects/redmine/wiki/Hooks_List
@@ -37,7 +39,7 @@ module Gamification
     #process all hooks attached to Issue creation
     def self.process_created_issue(issue)
       if issue.author.player?
-        HookToAction.for_issues.on_create.each {|h| h.play_action(issue.author.player)}
+        EventToAction.for_issues.on_create.each {|h| h.play_action(issue.author.player)}
       end  
     end
       
@@ -49,7 +51,7 @@ module Gamification
 
       if user.player?
         for scope in get_all_issue_event_scopes(issue)
-          HookToAction.for_issues.send(scope).each {|h| h.play_action(user.player)} 
+          EventToAction.for_issues.send(scope).each {|h| h.play_action(user.player)} 
         end
       end  
     end  
@@ -59,7 +61,7 @@ module Gamification
       if journal.notes.strip.present? && !journal.private_notes?
         user=User.current
         if user.player?
-          HookToAction.for_issues.on_comment.each {|h| h.play_action(user.player)}
+          EventToAction.for_issues.on_comment.each {|h| h.play_action(user.player)}
         end  
       end 
     end  

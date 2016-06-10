@@ -1,0 +1,30 @@
+GEM
+  specs:
+    ansi (1.5.0)
+    builder (3.2.2)
+    json (1.8.3)
+    jwt (1.5.4)
+    minitest (5.9.0)
+    minitest-reporters (1.1.9)
+      ansi
+      builder
+      minitest (>= 5.0)
+      ruby-progressbar
+    netrc (0.7.9)
+    playlyfe_client (1.0.4)
+      json
+      jwt
+      rest_client
+    rest_client (1.8.3)
+      netrc (~> 0.7.7)
+    ruby-progressbar (1.8.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  minitest-reporters
+  playlyfe_client
+
+BUNDLED WITH
+   1.10.6

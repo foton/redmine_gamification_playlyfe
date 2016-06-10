@@ -1,6 +1,6 @@
 require File.expand_path('../../test_helper', __FILE__)
 
-class HookToActionTest < ActiveSupport::TestCase
+class EventToActionTest < ActiveSupport::TestCase
   fixtures_for_creating_issues
   
   def setup
@@ -9,10 +9,10 @@ class HookToActionTest < ActiveSupport::TestCase
   end  
 
   def test_play_action
-    hook=Gamification::HookToAction.new(
+    hook=Gamification::EventToAction.new(
         {
-          event_source: Gamification::HookToAction::EVENT_SOURCE_ISSUE,
-          event_name: Gamification::HookToAction::EVENT_NAME_ON_CREATE,
+          event_source: Gamification::EventToAction::EVENT_SOURCE_ISSUE,
+          event_name: Gamification::EventToAction::EVENT_NAME_ON_CREATE,
           action_id: "issue_created"
         }
       )
@@ -27,20 +27,24 @@ class HookToActionTest < ActiveSupport::TestCase
   end 
 
   def test_knows_all_event_sources
-    expected=[Gamification::HookToAction::EVENT_SOURCE_ISSUE].sort
-    assert_equal expected, Gamification::HookToAction.event_sources
+    expected=[Gamification::EventToAction::EVENT_SOURCE_ISSUE].sort
+    assert_equal expected, Gamification::EventToAction.event_sources
   end 
 
   def test_knows_all_event_names
     expected=[
-      Gamification::HookToAction::EVENT_NAME_ON_CREATE,
-      Gamification::HookToAction::EVENT_NAME_ON_STATUS_CHANGE,
-      Gamification::HookToAction::EVENT_NAME_ON_OTHER_UPDATE,
-      Gamification::HookToAction::EVENT_NAME_ON_COMMENT,
-      Gamification::HookToAction::EVENT_NAME_ON_CLOSE
+      Gamification::EventToAction::EVENT_NAME_ON_CREATE,
+      Gamification::EventToAction::EVENT_NAME_ON_STATUS_CHANGE,
+      Gamification::EventToAction::EVENT_NAME_ON_OTHER_UPDATE,
+      Gamification::EventToAction::EVENT_NAME_ON_COMMENT,
+      Gamification::EventToAction::EVENT_NAME_ON_CLOSE
       ].sort
-    assert_equal expected, Gamification::HookToAction.event_names
+    assert_equal expected, Gamification::EventToAction.event_names
   end 
+
+  def test_knows_available_events
+    assert_equal expected, Gamification::EventToAction.available_events
+  end  
 
   def test_process_event_from_issue_on_create
     stub_game_with(fake_game)
@@ -140,26 +144,26 @@ class HookToActionTest < ActiveSupport::TestCase
 
     def create_issue_hook_on(event_name, action_id)
       options={
-        event_source: Gamification::HookToAction::EVENT_SOURCE_ISSUE,
+        event_source: Gamification::EventToAction::EVENT_SOURCE_ISSUE,
         action_id: action_id
       }
       
       case event_name
       when :create
-        options[:event_name]= Gamification::HookToAction::EVENT_NAME_ON_CREATE
+        options[:event_name]= Gamification::EventToAction::EVENT_NAME_ON_CREATE
       when :other_update  
-        options[:event_name]= Gamification::HookToAction::EVENT_NAME_ON_OTHER_UPDATE
+        options[:event_name]= Gamification::EventToAction::EVENT_NAME_ON_OTHER_UPDATE
       when :comment  
-        options[:event_name]= Gamification::HookToAction::EVENT_NAME_ON_COMMENT
+        options[:event_name]= Gamification::EventToAction::EVENT_NAME_ON_COMMENT
       when :close 
-        options[:event_name]= Gamification::HookToAction::EVENT_NAME_ON_CLOSE
+        options[:event_name]= Gamification::EventToAction::EVENT_NAME_ON_CLOSE
       when :status_change
-        options[:event_name]= Gamification::HookToAction::EVENT_NAME_ON_STATUS_CHANGE
+        options[:event_name]= Gamification::EventToAction::EVENT_NAME_ON_STATUS_CHANGE
 
       else
         raise "Unrecognized event name symbol"  
       end  
       
-      Gamification::HookToAction.create!(options)
+      Gamification::EventToAction.create!(options)
     end
 end

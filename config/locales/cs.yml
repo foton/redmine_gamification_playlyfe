@@ -1,3 +1,16 @@
 cs:
-  plugin_name: "Gamifikace"
+  gamification:
+    menu_title: "Gamifikace"
+    index: 
+      available_actions: "Dostupné akce"
+      available_players: "Hráči" 
+      refresh_game: "Obnovit celou hru z Playlyfe"  
+    player:
+      for_users: "Pro uživatele"  
+    play_action:
+      choose_player: "Vyberte hráče na jehož konto se má akce provést"
+      available_actions: "Dostupné akce"
+      action_successfully_played: "Hráč '%{player_id}' zahrál úspěšně akci '%{action_id}'."
+      action_not_found: "Akce '%{action_id}' není v seznamu dostupných akcí!"
+      player_not_found: "Hráč '%{player_id}' není evidován mezi hráči!"
   

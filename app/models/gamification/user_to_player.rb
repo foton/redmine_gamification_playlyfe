@@ -5,6 +5,9 @@ module Gamification
     def player
       @player||=Gamification.game.players.find(self.player_id)
     end
-
+    
+    def user
+      @user||=User.find(self.user_id)
+    end  
   end
 end  

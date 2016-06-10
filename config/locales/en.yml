@@ -1,3 +1,16 @@
 en:
-  plugin_name: "Gamification"
+  gamification:
+    menu_title: "Gamification"
+    index: 
+      available_actions: "Available actions"
+      available_players: "Available players" 
+      refresh_game: "Refresh full game from Playlyfe"  
+    player:
+      for_users: "For users"  
+    play_action:
+      choose_player: "Select player, whom will be play actions"
+      available_actions: "Available actions"
+      action_successfully_played: "Action '%{action_id}' was successfully played by player '%{player_id}"
+      action_not_found: "Action '%{action_id}' was not found!"
+      player_not_found: "Player '%{player_id}' was not found!"
   

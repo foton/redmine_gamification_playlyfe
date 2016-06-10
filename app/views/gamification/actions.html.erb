@@ -1,1 +1,35 @@
-actions
+<%= stylesheet_link_tag '/gamification.css', plugin: 'redmine_gamification_playlyfe', media: 'screen' %>
+<%= javascript_tag '/gamification.js', plugin: 'redmine_gamification_playlyfe', media: 'screen' %>
+
+<script>
+function set_player_id_to_buttons($select){
+  $(".gamification-action_button").find(".player_id").val($select.val());
+};
+
+</script>
+
+
+<div>
+  <%= link_to t("gamification.index.refresh_game"), gamification_url(refresh_game: 1) %>
+</div>  
+
+<div>
+<%= label_tag(:player_id, t("gamification.play_action.choose_player")) %>
+<%=   select_tag(:player_id, 
+        options_for_select( ([["--",0]]+ @game_players.to_a.collect {|p| [p.name, p.id]}), @player.id),
+        onchange: "set_player_id_to_buttons($(this))",
+        id: "player"
+        ) %>
+</div>
+
+
+
+<div>
+  <h3><%= t("gamification.play_action.available_actions") %></h3>
+<% for action in @actions.to_a do %>
+  <%= form_tag(gamification_action_play_url(action_id: action.id), class: "gamification-action_button") do %>
+    <%= hidden_field_tag(:player_id, 0, id: "#{action.id}_player", class: "player_id") %>
+    <%= submit_tag(action.name) %>
+  <% end %>
+<% end %>
+</div>

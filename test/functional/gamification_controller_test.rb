@@ -6,6 +6,7 @@ class GamificationControllerTest < ActionController::TestCase
 
   def setup
     @user=User.find(2) 
+    Gamification::UserToPlayer.delete_all
     @player=Gamification::UserToPlayer.create!(user_id: @user.id, player_id: "player2")
     @game=fake_game
     stub_game_with(@game)
@@ -39,9 +40,16 @@ class GamificationControllerTest < ActionController::TestCase
 
   def test_player_with_id_for_admin
     current_user_set_to(:admin)
-    get :player, {player_id: 6} #dlopper2
+    get :player, {player_id: "player2"}
     assert_response :ok
     assert_template "gamification/player"
+  end
+
+  def test_player_with_not_existing_id_for_admin
+    current_user_set_to(:admin)
+    get :player, {player_id: "not_exists"}
+    assert_redirected_to gamification_url
+    assert_equal "Player 'not_exists' was not found!", flash[:error]
   end
 
   def test_player_for_nonadmin
@@ -93,7 +101,7 @@ class GamificationControllerTest < ActionController::TestCase
     post :play_action, {action_id: "issue_commented", player_id: "player100"}
     assert_response :ok
     assert_template "gamification/actions"
-    assert_equal "Player 'player100' not found!", flash[:error]
+    assert_equal "Player 'player100' was not found!", flash[:error]
     assert_equal played_actions, @game.actions_played.size
   end
 
@@ -104,7 +112,7 @@ class GamificationControllerTest < ActionController::TestCase
     post :play_action, {action_id: "action100", player_id: "player1"}
     assert_response :ok
     assert_template "gamification/actions"
-    assert_equal "Action 'action100' not found!", flash[:error]
+    assert_equal "Action 'action100' was not found!", flash[:error]
     assert_equal played_actions, @game.actions_played.size
   end
 
@@ -121,29 +129,79 @@ class GamificationControllerTest < ActionController::TestCase
     assert assigns(:users).present?
     assert_equal User.count, assigns(:users).size
     assert assigns(:users_to_players).present?
-    assert_equal Gamification::UserToPlayer.count, assigns(:users_to_players).size
+    assert_equal Gamification::UserToPlayer.count+5, assigns(:users_to_players).size #added 5 blanks UserToPlayer objects
 
     assert assigns(:actions).present?
     assert_equal @game.actions.to_a.size, assigns(:actions).to_a.size
     #assert assigns(:available_hooks).present?
-    #assert_equal Gamification::HookToAction.available_hooks.size, assigns(:available_hooks).size
+    #assert_equal Gamification::EventToAction.available_hooks.size, assigns(:available_hooks).size
     assert assigns(:event_sources).present?
-    assert_equal Gamification::HookToAction.event_sources, assigns(:event_sources)
+    assert_equal Gamification::EventToAction.event_sources, assigns(:event_sources)
     assert assigns(:event_names).present?
-    assert_equal Gamification::HookToAction.event_names, assigns(:event_names)
+    assert_equal Gamification::EventToAction.event_names, assigns(:event_names)
     refute assigns(:hooks_to_actions).nil?
-    assert_equal Gamification::HookToAction.all.size, assigns(:hooks_to_actions).size
+    assert_equal Gamification::EventToAction.all.size, assigns(:hooks_to_actions).size
   end
 
-  def test_set_configuration_for_admin
+  def test_configuration_update_new
     current_user_set_to(:admin)
-    hook_name=Gamification::HookToAction.available_hooks.first.first
-    action_1=@game.actions.to_a.first
-    action_3=@game.actions.to_a.last
+    Gamification::UserToPlayer.delete_all
+    assert_equal 0, Gamification::UserToPlayer.count
 
-    put :set_configuration, {}, {hooks_actions: [[hook_name,action_1.id],[hook_name,action_3.id]]}
+    Gamification::UserToPlayer
+    
+    params={
+      "users_to_players" => [
+        {"user_id" => "1", "player_id" => "player1"},
+        {"user_id" => "2", "player_id" => "player2"},
+        {"user_id" => "3", "player_id" => "player2"},
+        {"user_id" => "0", "player_id" => "0"},
+        {"user_id" => "", "player_id" => ""}
+      ],
+      "commit" => "Save changes"      
+    }
+        
+    put :configuration_update, params
+
     assert_redirected_to gamification_configuration_url
+    assert_equal 3, Gamification::UserToPlayer.count
+    assert_equal [1], Gamification::UserToPlayer.where(player_id: "player1").pluck(:user_id)
+    assert_equal [2,3], Gamification::UserToPlayer.where(player_id: "player2").pluck(:user_id).sort
   end
+
+  def test_configuration_update_existing
+    current_user_set_to(:admin)
+    Gamification::UserToPlayer.delete_all
+    p11=Gamification::UserToPlayer.create!(user_id: 1, player_id: "player1") #persist
+    p22=Gamification::UserToPlayer.create!(user_id: 2, player_id: "player2") #persist
+    p33=Gamification::UserToPlayer.create!(user_id: 3, player_id: "player3") #will be deleted
+    p42=Gamification::UserToPlayer.create!(user_id: 4, player_id: "player2") #will be deleted
+    assert_equal 4, Gamification::UserToPlayer.count
+    assert_equal [1], Gamification::UserToPlayer.where(player_id: "player1").pluck(:user_id)
+    assert_equal [2,4], Gamification::UserToPlayer.where(player_id: "player2").pluck(:user_id).sort
+    assert_equal [3], Gamification::UserToPlayer.where(player_id: "player3").pluck(:user_id).sort
+
+    
+    params={
+      "users_to_players" => [
+        {"user_id" => "1", "player_id" => "player1"}, #already existing in DB
+        {"user_id" => "2", "player_id" => "player2"}, #already existing in DB
+        {"user_id" => "3", "player_id" => "player2"}, #will be created
+        {"user_id" => "0", "player_id" => "0"},
+        {"user_id" => "", "player_id" => ""}
+      ],
+      "commit" => "Save changes"      
+    }
+        
+    put :configuration_update, params
+
+    assert_redirected_to gamification_configuration_url
+    assert_equal 3, Gamification::UserToPlayer.count
+    assert_equal [1], Gamification::UserToPlayer.where(player_id: "player1").pluck(:user_id)
+    assert_equal [2,3], Gamification::UserToPlayer.where(player_id: "player2").pluck(:user_id).sort
+    assert_equal [], Gamification::UserToPlayer.where(player_id: "player3").pluck(:user_id).sort
+  end
+
 
   def test_actions_for_nonadmin
     current_user_set_to(:player)
@@ -163,9 +221,9 @@ class GamificationControllerTest < ActionController::TestCase
     assert_response  :forbidden
   end
 
-  def test_set_configuration_for_nonadmin
+  def test_configuration_update_for_nonadmin
     current_user_set_to(:player)
-    put :set_configuration
+    put :configuration_update
     assert_response :forbidden
   end
 

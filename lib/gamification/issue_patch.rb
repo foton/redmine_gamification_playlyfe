@@ -29,12 +29,12 @@ module Gamification
        
       def process_gamification_on_save
         puts("process_gamification_on_save")
-        Gamification::HookToAction.process_issue(self)
+        Gamification::EventToAction.process_issue(self)
       end
 
       def process_gamification_on_create
         puts("process_gamification_on_create")
-        Gamification::HookToAction.process_created_issue(self)
+        Gamification::EventToAction.process_created_issue(self)
       end
         
       private :process_gamification_on_save

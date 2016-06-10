@@ -31,7 +31,7 @@ class GamificationRouteTest < ActionController::TestCase
   end
 
   def test_play_action_page 
-    assert_routing({ method: 'put', path: "/gamification/configuration"}, {controller: "gamification", action: "set_configuration"})
+    assert_routing({ method: 'put', path: "/gamification/configuration"}, {controller: "gamification", action: "configuration_update"})
   end
 
 

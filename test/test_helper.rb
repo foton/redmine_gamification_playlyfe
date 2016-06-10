@@ -31,7 +31,11 @@ Struct.new("Player", :id, :name, :game, :scores) do
   end  
 end  
 
-Struct.new("Action", :id, :name, :game)
+Struct.new("Action", :id, :name, :game) do
+  def rewards
+    []
+  end
+end
 
 Struct.new("Collection", :to_a) do
   def find(id)

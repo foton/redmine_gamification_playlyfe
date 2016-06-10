@@ -1,1 +1,7 @@
-you are not linked to any game player
+<h3><%= @player.name %></h3>
+<div>
+  <%= t("gamification.player.for_users") %>: <%= all_users_for_player(@player) %>
+</div>  
+<div>
+  <%= @player.scores %>
+</div>
