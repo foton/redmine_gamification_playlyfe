@@ -1,31 +1,31 @@
 <%= stylesheet_link_tag '/gamification.css', plugin: 'redmine_gamification_playlyfe', media: 'screen' %>
 
+<%= render partial: "shared_links" %>
 
-<div>
-  <%= link_to t("gamification.index.refresh_game"), gamification_url(refresh_game: 1) %>
-</div>  
+<div id="game">
 
-index
-<%= link_to(:leaderboards, gamification_leaderboards_path) %>
-<%= link_to(:actions, gamification_actions_path) %>
-<%= link_to(:configuration, gamification_configuration_path) %>
+  <div id="leaderboards">
+  <h3><%= t("gamification.index.leaderboards") %></h3>
+    <% for lb in @leaderboards.to_a do %>
+      <%= render partial: "leaderboard", locals: {leaderboard: lb} %>
+    <% end %>
+  </div>
 
-<div>
-<h3><%= t("gamification.index.available_players") %></h3>
-  <ul>
-  <% for pl in @game_players.to_a do %>
-    <li><%= link_to pl.name, gamification_player_url(player_id: pl.id) %></li>
-  <% end %>
-  </ul>
-</div>
+  <div id="players">
+  <h3><%= t("gamification.index.available_players") %></h3>
+    <ul>
+    <% for pl in @game_players.to_a do %>
+      <li><%= link_to pl.name, gamification_player_url(player_id: pl.id) %></li>
+    <% end %>
+    </ul>
+  </div>
 
-
-
-<div>
-  <h3><%= t("gamification.index.available_actions") %></h3>
-  <ul>
-  <% for action in @actions.to_a do %>
-    <li><%= action.name %> <%= rewards_to_s_for_action(action) %></li>
-  <% end %>
-  </ul>
+  <div id="actions">
+    <h3><%= t("gamification.index.available_actions") %></h3>
+    <ul>
+    <% for action in @actions.to_a do %>
+      <li><%= action.name %> <%= rewards_to_s_for_action(action) %></li>
+    <% end %>
+    </ul>
+  </div>
 </div>

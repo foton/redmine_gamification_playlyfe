@@ -6,5 +6,6 @@
   post  'gamification/actions/:action_id/play' => 'gamification#play_action', as: :gamification_action_play
   get   'gamification/configuration' => 'gamification#configuration'
   put   'gamification/configuration' => 'gamification#configuration_update', as: :gamification_configuration_update
+  #post  'gamification/configuration' => 'gamification#configuration_update'
 
 

@@ -1,0 +1,15 @@
+.gamification-action_button input{
+  height: 5em;
+}
+
+#gamification #events_to_actions {
+  margin-bottom: 2em;
+}
+
+#gamification #users_to_players {
+  margin-bottom: 2em;
+}
+
+#shared_links {
+ margin-bottom: 2em; 
+}

@@ -1,5 +1,6 @@
 <%= stylesheet_link_tag '/gamification.css', plugin: 'redmine_gamification_playlyfe', media: 'screen' %>
-<%= javascript_tag '/gamification.js', plugin: 'redmine_gamification_playlyfe', media: 'screen' %>
+
+<%= render partial: "shared_links" %>
 
 <script>
 function set_player_id_to_buttons($select){

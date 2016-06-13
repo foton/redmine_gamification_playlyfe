@@ -1,23 +1,17 @@
- <%= form_tag(gamification_configuration_update_url, method: :put) do %>
-  <div>
-    <table>
-    <% @users_to_players.each do |u2p| %>
-      <%= fields_for 'users_to_players[]', u2p do |up| %>
-      <tr>
-        <td>
-          <%= up.select :user_id, options_for_user_select(up.object.user_id) %>
-        </td>
-        <td>
-          <%= up.select :player_id, options_for_player_select(up.object.player_id) %>
-        </td>  
-      </tr>    
-      <% end %>
-    <% end %>
-    </table>
-  </div>  
+<%= stylesheet_link_tag '/gamification.css', plugin: 'redmine_gamification_playlyfe', media: 'screen' %>
 
-   
+<%= render partial: "shared_links" %>
+
+<h2><%= t("gamification.configuration.header") %></h2>
+
+<div id="gamification">
+<%= form_tag(gamification_configuration_update_url, method: :put) do %>
+
+  <%= render partial: "event_to_actions_fields" %>  
+  <%= render partial: "users_to_players_fields" %>
+
   <div class="actions">
-    <%= submit_tag %>
+    <%= submit_tag  t("gamification.configuration.save_configuration_button") %>
   </div>
 <% end %>
+</div>

@@ -18,8 +18,42 @@ module Gamification
       @@event_names ||= self.constants(false).select{|c| c=~/EVENT_NAME_.+/}.map{|c| self.module_eval c.to_s}.sort{|a,b| a<=>b}
     end
 
+    validate :validate_event_id
+    validate :validate_action_id
+    #validates :action, presence: true, inclusion: { in: (Gamification.game.actions.collect {|a| a.id}) , message: I18n.t("gamification.event_to_action.action_is_not_in_game", action_id: value) }    
+
     def <=>(other)
-      if (self.event_source)
+      r=(self.event_source <=>  other.event_source)
+      return r if r != 0
+      r=(self.event_name <=>  other.event_name)
+      return r if r != 0
+      return (self.action_id <=>  other.action_id)
+    end  
+
+    def event_id
+      @event_id||=(self.event_source.to_s+"-"+self.event_name.to_s)
+    end  
+
+    def event_id=(ev_id)
+      self.event_source, self.event_name = ev_id.split("-")
+      @event_id=ev_id
+    end  
+
+    
+    
+    #combination of event sources and event names  which are allowed to use
+    def self.available_event_ids
+      unless defined? @available_event_ids
+        @available_event_ids=[]
+        @available_event_ids << self.new({ event_source: EVENT_SOURCE_ISSUE, event_name: EVENT_NAME_ON_CREATE }).event_id
+        @available_event_ids << self.new({ event_source: EVENT_SOURCE_ISSUE, event_name: EVENT_NAME_ON_STATUS_CHANGE }).event_id
+        @available_event_ids << self.new({ event_source: EVENT_SOURCE_ISSUE, event_name: EVENT_NAME_ON_OTHER_UPDATE }).event_id
+        @available_event_ids << self.new({ event_source: EVENT_SOURCE_ISSUE, event_name: EVENT_NAME_ON_COMMENT }).event_id
+        @available_event_ids << self.new({ event_source: EVENT_SOURCE_ISSUE, event_name: EVENT_NAME_ON_CLOSE }).event_id
+
+        @available_event_ids.sort!
+      end  
+      @available_event_ids  
     end  
 
     def self.available_hooks
@@ -79,6 +113,19 @@ module Gamification
     scope :on_close, -> { where(event_name: EVENT_NAME_ON_CLOSE) }
 
     private
+
+      def validate_event_id
+        unless Gamification::EventToAction.available_event_ids.include?(self.event_id)
+          self.errors.add(:event_source, I18n.t("gamification.event_to_action.errors.event_id_is_not_available", event_id: self.event_id))
+          self.errors.add(:event_name, I18n.t("gamification.event_to_action.errors.event_id_is_not_available", event_id: self.event_id))
+        end  
+      end
+
+      def validate_action_id
+        if self.action_id.blank? || !( (Gamification.game.actions.to_a.collect {|a| a.id}).include?(self.action_id))
+          self.errors.add(:action_id, I18n.t("gamification.event_to_action.errors.action_is_not_in_game", action_id: self.action_id) )
+        end  
+      end      
 
       def action
         @action||=::Gamification.game.actions.find(self.action_id)

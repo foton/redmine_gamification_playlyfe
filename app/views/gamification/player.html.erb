@@ -1,3 +1,7 @@
+<%= stylesheet_link_tag '/gamification.css', plugin: 'redmine_gamification_playlyfe', media: 'screen' %>
+
+<%= partial: "shared_links" %>
+
 <h3><%= @player.name %></h3>
 <div>
   <%= t("gamification.player.for_users") %>: <%= all_users_for_player(@player) %>

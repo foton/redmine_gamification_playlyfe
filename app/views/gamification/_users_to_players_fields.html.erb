@@ -1,0 +1,26 @@
+  <div id="users_to_players">
+    <table>
+      <thead>
+        <tr>
+          <th><%= t("gamification.configuration.user_from_redmine") %></th>
+          <th><%= t("gamification.configuration.player_to_link") %></th>
+        </tr>
+      </thead>
+      <tbody>
+      <% @users_to_players.each do |u2p| %>
+        <%= fields_for 'users_to_players[]', u2p do |up| %>
+        <tr>
+          <td>
+            <%= up.select :user_id, options_for_user_select(up.object.user_id) %>
+          </td>
+          <td>
+            <%= up.select :player_id, options_for_player_select(up.object.player_id) %>
+          </td>  
+        </tr>    
+        <% end %>
+      <% end %>
+      </tbody>
+    </table>
+
+    <%= t("gamification.configuration.more_blank_after_submit") %>
+  </div>  

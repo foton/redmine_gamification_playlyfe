@@ -19,10 +19,20 @@ module GamificationHelper
   end 
 
   def options_for_user_select(user_id)
-    options_for_select( ([["--",0]]+ @users.to_a.collect {|u| ["#{u.login} - #{u.name} ", u.id]}), user_id)
+    options_for_select( ([["--",0]]+ @users.to_a.collect {|u| ["#{u.login} - #{u.name}", u.id]}), user_id)
+    #options_for_select([["one",1],["two",2]])
   end
 
   def options_for_player_select(player_id)
     options_for_select( ([["--",0]]+ @game_players.to_a.collect {|p| [p.name, p.id]}), player_id)
+    #options_for_select([["one",1],["two",2]])
+  end 
+
+  def options_for_event_select(event_id)
+    options_for_select( ([["--","-"]]+ @available_event_ids.to_a.collect {|e_id| [e_id, e_id]}), (event_id || "") )
+  end 
+
+  def options_for_action_select(action_id)
+    options_for_select( ([["--",""]]+ @actions.to_a.collect {|a| [a.name, a.id]}), (action_id || "") )
   end 
 end

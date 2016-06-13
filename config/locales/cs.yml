@@ -8,9 +8,29 @@ cs:
     player:
       for_users: "Pro uživatele"  
     play_action:
+      title: "Přímo hrát akce"
       choose_player: "Vyberte hráče na jehož konto se má akce provést"
       available_actions: "Dostupné akce"
       action_successfully_played: "Hráč '%{player_id}' zahrál úspěšně akci '%{action_id}'."
-      action_not_found: "Akce '%{action_id}' není v seznamu dostupných akcí!"
-      player_not_found: "Hráč '%{player_id}' není evidován mezi hráči!"
+    configuration:
+      header: "Provázání Redmine s Hrou na Playlyfe"
+      successfully_updated: "Konfigurace úspěšně aktualizována" 
+      event_from_redmine: "Událost v Redmine"
+      action_to_play: "spustí ve Hře akci"
+      user_from_redmine: "Uživatel z Redmine"
+      player_to_link: "hraje za hráče"
+      more_blank_after_submit: "další prázdné položky přibudou po odeslání formuláře"
+      save_configuration_button: "Uložit konfiguraci"
+    user_to_player:  
+      errors:
+        player_is_not_in_game: "Hráč '%{player_id}' není evidován mezi hráči!"
+        error_on_creating: "Uživatel %{user_id} nemůže být napojen na hráče %{player_id} z důvodů: %{errors}"  
+   
+    event_to_action:
+      event: "Událost"
+      action: "Akce"
+      errors:
+        event_id_is_not_available: "Kombinace '%{event_id}' není v systému povolena!"  
+        action_is_not_in_game: "Akce '%{action_id}' není mezi akcemi definovanými ve Hře!"
+        error_on_creating: "Propojení události %{event_id} s akcí %{action_id} se nezdařilo kvůli chybám: %{errors}"
   

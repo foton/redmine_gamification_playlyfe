@@ -11,6 +11,16 @@ en:
       choose_player: "Select player, whom will be play actions"
       available_actions: "Available actions"
       action_successfully_played: "Action '%{action_id}' was successfully played by player '%{player_id}"
-      action_not_found: "Action '%{action_id}' was not found!"
-      player_not_found: "Player '%{player_id}' was not found!"
-  
+    user_to_player:  
+      errors:
+        player_is_not_in_game: "Player '%{player_id}' is not between Game players!"
+        error_on_creating: "Link between user %{user_id} and player %{player_id} cannot be created. Reasons: %{errors}"  
+    configuration:
+      successfully_updated: "Configuration successfully updated"            
+    event_to_action:
+      event: "Event"
+      action: "Action"
+      errors:
+        event_id_is_not_available: "Combination '%{event_id}' is not available/allowed!"  
+        action_is_not_in_game: "Action '%{action_id}' is not between actions of Game!"
+        error_on_creating: "Link between event %{event_id} and action %{action_id} cannot be created. Reasons: %{errors}"  

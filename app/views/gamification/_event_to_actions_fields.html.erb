@@ -1,0 +1,26 @@
+  <div id="events_to_actions">
+    <table>
+      <thead>
+        <tr>
+          <th><%= t("gamification.configuration.event_from_redmine") %></th>
+          <th><%= t("gamification.configuration.action_to_play") %></th>
+        </tr>
+      </thead>
+      <tbody>
+      <% @events_to_actions.each do |e2a| %>
+        <%= fields_for 'events_to_actions[]', e2a do |ea| %>
+        <tr>
+          <td>
+            <%= ea.select :event_id, options_for_event_select(ea.object.event_id) %>
+          </td>
+          <td>
+            <%= ea.select :action_id, options_for_action_select(ea.object.action_id) %>
+          </td>  
+        </tr>    
+        <% end %>
+      <% end %>
+    </tbody>
+    </table>
+
+    <%= t("gamification.configuration.more_blank_after_submit") %>
+  </div>  

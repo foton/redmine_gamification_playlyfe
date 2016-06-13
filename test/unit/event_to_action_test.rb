@@ -6,10 +6,12 @@ class EventToActionTest < ActiveSupport::TestCase
   def setup
     User.current=User.find(3)
     create_player(User.current, "player1")
+    @game=fake_game
+    stub_game_with(@game)
   end  
 
   def test_play_action
-    hook=Gamification::EventToAction.new(
+    event=Gamification::EventToAction.new(
         {
           event_source: Gamification::EventToAction::EVENT_SOURCE_ISSUE,
           event_name: Gamification::EventToAction::EVENT_NAME_ON_CREATE,
@@ -20,10 +22,10 @@ class EventToActionTest < ActiveSupport::TestCase
     played_actions=fake_game.actions_played.size
     player=fake_game.players.to_a.first
     
-    hook.play_action(player)
+    event.play_action(player)
 
     assert_equal played_actions+1, fake_game.actions_played.size
-    assert_equal hook.action_id, fake_game.actions_played.last 
+    assert_equal event.action_id, fake_game.actions_played.last 
   end 
 
   def test_knows_all_event_sources
@@ -42,9 +44,68 @@ class EventToActionTest < ActiveSupport::TestCase
     assert_equal expected, Gamification::EventToAction.event_names
   end 
 
-  def test_knows_available_events
-    assert_equal expected, Gamification::EventToAction.available_events
+  def test_knows_available_event_ids
+    expected=[
+        "issue-create",
+        "issue-status_change",
+        "issue-other_update",
+        "issue-comment",
+        "issue-close"
+      ].sort
+    assert_equal expected, Gamification::EventToAction.available_event_ids
   end  
+
+  def test_is_valid_if_event_id_is_available
+    event=Gamification::EventToAction.new(
+        {
+          event_source: Gamification::EventToAction::EVENT_SOURCE_ISSUE,
+          event_name: Gamification::EventToAction::EVENT_NAME_ON_CREATE,
+          action_id: "issue_created"
+        }
+      )
+    assert event.valid?
+
+    event=Gamification::EventToAction.new(
+        {
+          event_source: Gamification::EventToAction::EVENT_SOURCE_ISSUE,
+          event_name: "my_name",
+          action_id: "issue_created"
+        }
+      )
+    refute event.valid?
+    assert event.errors[:event_source].present?
+    assert event.errors[:event_name].present?
+
+    event=Gamification::EventToAction.new(
+        {
+          event_source: "bongo",
+          event_name: Gamification::EventToAction::EVENT_NAME_ON_CREATE,
+          action_id: "issue_created"
+        }
+      )
+    refute event.valid?
+    assert event.errors[:event_source].present?
+    assert event.errors[:event_name].present?
+  end  
+
+  def test_is_invalid_if_action_id_is_not_in_game
+    action_id="no_action_here"
+    assert @game.actions.find(action_id).nil?
+
+    event=Gamification::EventToAction.new(
+        {
+          event_source: Gamification::EventToAction::EVENT_SOURCE_ISSUE,
+          event_name: Gamification::EventToAction::EVENT_NAME_ON_CREATE,
+          action_id: action_id
+        }
+      )
+    refute event.valid?
+    assert event.errors[:action_id].present?
+
+    event.action_id=""
+    refute event.valid?
+    assert event.errors[:action_id].present?
+  end 
 
   def test_process_event_from_issue_on_create
     stub_game_with(fake_game)

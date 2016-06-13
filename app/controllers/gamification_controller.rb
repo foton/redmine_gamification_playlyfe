@@ -8,6 +8,7 @@ class GamificationController < ApplicationController
       Gamification.game=nil #this will force refresh, otherwise game is chached only play_action is doing requests to Playlyfe API
     end  
     load_actions_and_game_players
+    #load_leaderboards
   end
       
   def leaderboards
@@ -48,15 +49,21 @@ class GamificationController < ApplicationController
     5.times { @users_to_players << Gamification::UserToPlayer.new }
     @users=User.order("login ASC")
     
-    @event_sources=Gamification::EventToAction.event_sources
-    @event_names=Gamification::EventToAction.event_names
-    @hooks_to_actions=Gamification::EventToAction.all
+    @available_event_ids=Gamification::EventToAction.available_event_ids
+    @events_to_actions=Gamification::EventToAction.all
+    5.times { @events_to_actions << Gamification::EventToAction.new }
   end
 
   def configuration_update
-    update_users_to_players if params["users_to_players"].present?
-    update_events_to_actions
-    flash[:notice]="Configuration updated"
+    u2p_errors=[]
+    e2a_errors=[]
+    u2p_errors=update_users_to_players if params["users_to_players"].present?
+    e2a_errors=update_events_to_actions if params["events_to_actions"].present?
+    if u2p_errors.blank? && e2a_errors.blank?
+      flash[:notice]=I18n.t("gamification.configuration.successfully_updated")
+    else
+      flash[:error]=(u2p_errors+e2a_errors).join("<br />")
+    end  
     redirect_to gamification_configuration_url
   end  
 
@@ -69,7 +76,7 @@ class GamificationController < ApplicationController
     def set_player
       @player=game.players.find(params[:player_id])
       if @player.blank?
-        flash[:error] = t("gamification.play_action.player_not_found", player_id: params[:player_id])
+        flash[:error] = t("gamification.user_to_player.errors.player_is_not_in_game", player_id: params[:player_id])
         return false
       else  
         return true
@@ -79,7 +86,7 @@ class GamificationController < ApplicationController
     def set_action
       @action=game.actions.find(params[:action_id])
       if @action.blank?
-        flash[:error] = t("gamification.play_action.action_not_found", action_id: params[:action_id])
+        flash[:error] = t("gamification.event_to_action.errors.action_is_not_in_game", action_id: params[:action_id])
         return false
       else  
         return true
@@ -88,6 +95,7 @@ class GamificationController < ApplicationController
 
     def require_player_or_admin
       return unless require_login
+
       if User.current.admin? || User.current.player?
         return true
       else  
@@ -97,6 +105,7 @@ class GamificationController < ApplicationController
     end
 
     def update_users_to_players
+      errors=[]
       clean_u2ps=cleaned_u2ps.dup
       existing_u2ps=Gamification::UserToPlayer.all
 
@@ -119,9 +128,11 @@ class GamificationController < ApplicationController
         u2p=Gamification::UserToPlayer.new
         u2p.player_id=u_p[:player_id]
         u2p.user_id=u_p[:user_id]
-        u2p.save!
+        unless u2p.save
+          errors << I18n.t("gamification.user_to_player.errors.error_on_creating", user_id: u2p.user_id, player_id: u2p.player_id, errors: u2p.errors.full_messages.join("; "))
+        end 
       end
-
+      errors
     end  
 
     def cleaned_u2ps
@@ -130,12 +141,47 @@ class GamificationController < ApplicationController
     end    
 
     def update_events_to_actions
+      errors=[]
+      clean_e2as=cleaned_e2as.dup
+      existing_e2as=Gamification::EventToAction.all
+
+      existing_e2as.each do |ar_e2a|
+        h={event_id: ar_e2a.event_id, action_id: ar_e2a.action_id}
+
+        if clean_e2as.include?(h)
+          #no change here: leave it in DB, remove from params
+          clean_e2as.delete(h)
+        else
+          #is in DB but do not set in params => delete from DB
+          ar_e2a.destroy
+        end  
+      end
+      
+      #there left only new records in clean_e2as 
+      clean_e2as.each do |u_p|
+        e2a=Gamification::EventToAction.new
+        e2a.event_id=u_p[:event_id]
+        e2a.action_id=u_p[:action_id]
+        unless e2a.save
+          errors << I18n.t("gamification.event_to_action.errors.error_on_creating", event_id: e2a.event_id, action_id: e2a.action_id, errors: e2a.errors.full_messages.join("; "))
+        end  
+      end
+      errors
     end  
+
+    def cleaned_e2as
+      e2as=params[:events_to_actions].select { |e2a| e2a[:action_id].present? && e2a[:event_id].present? }
+      e2as.collect {|e2a| { event_id: e2a[:event_id].to_s, action_id: e2a[:action_id].to_s} }
+    end 
 
     def load_actions_and_game_players
       @actions=game.actions
       @game_players=game.players
     end  
+
+    # def load_leaderboards
+    #   @leaderboards=[]
+    # end  
 
     def no_player
       ::PlaylyfeClient::V2::Player.new({id: 0, alias: "----"},game)
