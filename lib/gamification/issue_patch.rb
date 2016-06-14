@@ -37,12 +37,10 @@ module Gamification
       end
        
       def process_gamification_on_save
-        puts("process_gamification_on_save")
         Gamification::EventToAction.process_issue(self)
       end
 
       def process_gamification_on_create
-        puts("process_gamification_on_create")
         Gamification::EventToAction.process_created_issue(self)
       end
         

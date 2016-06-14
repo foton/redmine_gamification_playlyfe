@@ -72,7 +72,6 @@ module Gamification
 
     #process all hooks attached to Issue creation
     def self.process_created_issue(issue)
-      binding.pry
       if issue.author.player?
         EventToAction.for_issues.on_create.each {|h| h.play_action(issue.author.player)}
       end  
@@ -80,7 +79,6 @@ module Gamification
       
     #process all hooks attached to Issue events, except :create
     def self.process_issue(issue)
-      binding.pry
       return if issue.created_on == issue.updated_on  #on creation  'create' AND 'save' events are triggered
 
       user=User.current
@@ -94,7 +92,6 @@ module Gamification
 
     #comenting issue => creating journal with notes
     def self.process_commented_issue(journal)
-      binding.pry
       if journal.notes.strip.present? && !journal.private_notes?
         user=User.current
         if user.player?
