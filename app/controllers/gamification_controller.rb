@@ -1,19 +1,18 @@
 class GamificationController < ApplicationController
   
   before_filter :require_player_or_admin  #, only: [:index, :leaderboards, :my_scores]
-  before_filter :require_admin, except: [:index, :leaderboards, :my_scores]
+  before_filter :require_admin, except: [:index, :my_scores]
   
   def index
+    @player=User.current.player #can be nil for admin!
+
     if params[:refresh_game]
       Gamification.game=nil #this will force refresh, otherwise game is chached only play_action is doing requests to Playlyfe API
     end  
     load_actions_and_game_players
-    #load_leaderboards
+    load_leaderboards
   end
       
-  def leaderboards
-  end
-
   def my_scores
     @player=User.current.player
     render "player"
@@ -175,13 +174,13 @@ class GamificationController < ApplicationController
     end 
 
     def load_actions_and_game_players
-      @actions=game.actions
-      @game_players=game.players
+      @actions||=game.actions
+      @game_players||=game.players
     end  
 
-    # def load_leaderboards
-    #   @leaderboards=[]
-    # end  
+    def load_leaderboards
+      @leaderboards||=game.leaderboards
+    end  
 
     def no_player
       ::PlaylyfeClient::V2::Player.new({id: 0, alias: "----"},game)

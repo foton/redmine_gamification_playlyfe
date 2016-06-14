@@ -13,3 +13,22 @@
 #shared_links {
  margin-bottom: 2em; 
 }
+
+#leaderboards {
+ width: 48%;  
+ float:left;
+}
+
+#players {
+ width: 48%;  
+ float: right;
+}
+
+#actions {
+ width: 48%;  
+ float: right;
+}
+
+.leaderboard {
+ margin-bottom: 2em;  
+}

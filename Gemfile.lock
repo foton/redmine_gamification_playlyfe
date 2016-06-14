@@ -1,23 +1,45 @@
 GEM
+  remote: https://rubygems.org/
   specs:
     ansi (1.5.0)
     builder (3.2.2)
+    byebug (9.0.5)
+    coderay (1.1.1)
+    domain_name (0.5.20160310)
+      unf (>= 0.0.5, < 1.0.0)
+    http-cookie (1.0.2)
+      domain_name (~> 0.5)
     json (1.8.3)
     jwt (1.5.4)
+    method_source (0.8.2)
+    mime-types (2.99.2)
     minitest (5.9.0)
     minitest-reporters (1.1.9)
       ansi
       builder
       minitest (>= 5.0)
       ruby-progressbar
-    netrc (0.7.9)
-    playlyfe_client (1.0.4)
+    netrc (0.11.0)
+    playlyfe_client (1.0.6)
       json
       jwt
-      rest_client
-    rest_client (1.8.3)
-      netrc (~> 0.7.7)
+      rest-client
+    pry (0.10.3)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+    pry-byebug (3.4.0)
+      byebug (~> 9.0)
+      pry (~> 0.10)
+    rest-client (1.8.0)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 3.0)
+      netrc (~> 0.7)
     ruby-progressbar (1.8.1)
+    slop (3.6.0)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.2)
 
 PLATFORMS
   ruby
@@ -25,6 +47,7 @@ PLATFORMS
 DEPENDENCIES
   minitest-reporters
   playlyfe_client
+  pry-byebug
 
 BUNDLED WITH
    1.10.6

@@ -1,0 +1,14 @@
+<div class="leaderboard">
+  <h3><%= leaderboard.name %></h3>
+  <p class="metric_name"><%= leaderboard.metric["name"] %></p>
+
+  <ol class="positions">
+  <% leaderboard.positions.each_with_index do |pos| %>
+    <% if pos.nil? %>
+      <li>nil</li>
+    <% else %>
+      <li><%= show_position(pos, @player) %></li>
+    <% end %>  
+  <% end %>
+  </ol>
+</div>

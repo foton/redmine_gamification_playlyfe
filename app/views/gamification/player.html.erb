@@ -1,6 +1,6 @@
 <%= stylesheet_link_tag '/gamification.css', plugin: 'redmine_gamification_playlyfe', media: 'screen' %>
 
-<%= partial: "shared_links" %>
+<%= render partial: "shared_links" %>
 
 <h3><%= @player.name %></h3>
 <div>
@@ -8,4 +8,7 @@
 </div>  
 <div>
   <%= @player.scores %>
+</div>
+<div>
+  <%= @player.activities %>
 </div>

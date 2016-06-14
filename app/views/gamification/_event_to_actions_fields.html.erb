@@ -8,18 +8,16 @@
       </thead>
       <tbody>
       <% @events_to_actions.each do |e2a| %>
-        <%= fields_for 'events_to_actions[]', e2a do |ea| %>
         <tr>
           <td>
-            <%= ea.select :event_id, options_for_event_select(ea.object.event_id) %>
+            <%= select_tag("events_to_actions[][event_id]", options_for_event_select(e2a.event_id) ) %>
           </td>
           <td>
-            <%= ea.select :action_id, options_for_action_select(ea.object.action_id) %>
+            <%= select_tag("events_to_actions[][action_id]", options_for_action_select(e2a.action_id) ) %>
           </td>  
         </tr>    
-        <% end %>
       <% end %>
-    </tbody>
+      </tbody>
     </table>
 
     <%= t("gamification.configuration.more_blank_after_submit") %>

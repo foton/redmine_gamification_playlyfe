@@ -8,16 +8,14 @@
       </thead>
       <tbody>
       <% @users_to_players.each do |u2p| %>
-        <%= fields_for 'users_to_players[]', u2p do |up| %>
         <tr>
           <td>
-            <%= up.select :user_id, options_for_user_select(up.object.user_id) %>
+            <%= select_tag("users_to_players[][user_id]", options_for_user_select(u2p.user_id) ) %>
           </td>
           <td>
-            <%= up.select :player_id, options_for_player_select(up.object.player_id) %>
+            <%= select_tag("users_to_players[][player_id]", options_for_player_select(u2p.player_id) ) %>
           </td>  
         </tr>    
-        <% end %>
       <% end %>
       </tbody>
     </table>

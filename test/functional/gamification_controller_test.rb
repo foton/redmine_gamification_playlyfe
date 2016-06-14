@@ -58,13 +58,6 @@ class GamificationControllerTest < ActionController::TestCase
     assert_response :forbidden
   end
 
-  def test_leaderboards
-    current_user_set_to(:player)
-    get :leaderboards
-    assert_response :ok
-    assert_template "gamification/leaderboards"
-  end
-
   def test_actions_for_admin
     current_user_set_to(:admin)
     

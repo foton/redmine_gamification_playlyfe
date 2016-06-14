@@ -22,10 +22,6 @@ class GamificationRouteTest < ActionController::TestCase
     assert_routing({ method: 'post', path: "/gamification/actions/action1/play"}, {controller: "gamification", action: "play_action", action_id: "action1"})
   end
 
-  def test_leaderboards_page 
-    assert_routing "/gamification/leaderboards", controller: "gamification", action: "leaderboards"
-  end
-
   def test_configuration_page 
     assert_routing "/gamification/configuration", controller: "gamification", action: "configuration"
   end

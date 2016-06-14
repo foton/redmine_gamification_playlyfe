@@ -5,7 +5,6 @@
 <div id="game">
 
   <div id="leaderboards">
-  <h3><%= t("gamification.index.leaderboards") %></h3>
     <% for lb in @leaderboards.to_a do %>
       <%= render partial: "leaderboard", locals: {leaderboard: lb} %>
     <% end %>
@@ -15,7 +14,7 @@
   <h3><%= t("gamification.index.available_players") %></h3>
     <ul>
     <% for pl in @game_players.to_a do %>
-      <li><%= link_to pl.name, gamification_player_url(player_id: pl.id) %></li>
+      <li><%= player_to_link(pl) %></li>
     <% end %>
     </ul>
   </div>
