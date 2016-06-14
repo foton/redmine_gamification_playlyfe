@@ -11,6 +11,7 @@ module Gamification
       base.class_eval do
             
         after_save :process_gamification_on_save
+        after_update :store_changes
         after_create :process_gamification_on_create
 
         # Add visible to Redmine 0.8.x
@@ -26,6 +27,14 @@ module Gamification
     end
     
     module InstanceMethods
+
+      def store_changes
+        @saved_changes=self.changes
+      end
+
+      def saved_changes
+        @saved_changes || {}
+      end
        
       def process_gamification_on_save
         puts("process_gamification_on_save")

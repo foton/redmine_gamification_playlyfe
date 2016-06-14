@@ -16,15 +16,15 @@ module GamificationHelper
 
   def player_to_link(pl)
     if User.current.admin?
-      plink=link_to pl.name, gamification_player_url(player_id: pl.id)
+      plink=link_to( pl.name, gamification_player_url(player_id: pl.id))
     elsif User.current.player.id == pl.id 
-      plink=link_to pl.name, gamification_my_scores_url
+      plink=link_to(pl.name, gamification_my_scores_url)
     else
-      plink=pl.name
+      plink=pl.name.html_safe
     end   
-    plink+="<span class=\"states\"></span>"
-    plink+="<span class=\"sets\"></span>"
-    plink.html_safe
+    plink+="<span class=\"states\"></span>".html_safe
+    plink+="<span class=\"sets\"></span>".html_safe
+    plink
   end       
 
   def all_users_for_player(player)
