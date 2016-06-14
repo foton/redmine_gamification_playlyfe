@@ -36,12 +36,12 @@ Redmine::Plugin.register :redmine_gamification_playlyfe do
   description "This is a plugin for Redmine, which let you link users, actions and events in Redmine to Playlyfe game.
                You set your game (rules, actions, rewards ...) at Playlyfe and setup Redmine to use it's actions.
                So adding comment or closing issue can be rewarded."
-  version '0.0.1'
+  version '1.0.0'
   requires_redmine version_or_higher: '3.1.1'
 
   #permission :redmine_gamification_plugin, {:redmine_gamification_plugin => [:project]}, :public => true
 
-  menu :top_menu, :redmine_gamification_playlyfe, {controller: 'gamification', action: 'index'}, :caption => I18n.t("gamification.menu_title")
+  menu :top_menu, :redmine_gamification_playlyfe, {controller: 'gamification', action: 'index'}, :caption => "gamification.menu_title".to_sym
  # menu :project_menu, :project_gamification, {controller: 'gamification', action: 'project'}, caption: 'Status', param: :project_id 
   
   #permission :view_scores, { :gamification => [:index, :leaderboards, :my] }, :require => :loggedin

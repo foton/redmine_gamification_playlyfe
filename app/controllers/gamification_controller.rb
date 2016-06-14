@@ -1,6 +1,6 @@
 class GamificationController < ApplicationController
   
-  before_filter :require_player_or_admin  #, only: [:index, :leaderboards, :my_scores]
+  before_filter :require_player_or_admin 
   before_filter :require_admin, except: [:index, :my_scores]
   
   def index
@@ -69,7 +69,13 @@ class GamificationController < ApplicationController
   private
 
     def game
-      @game||=Gamification.game
+      begin
+        @game||=Gamification.game
+      rescue PlaylyfeClient::ConnectionError 
+        flash[:error]="Your settings are not correct! No such client is recognized by Playlyfe.com"
+        redirect_to plugin_settings_path(:redmine_gamification_playlyfe)
+      end  
+      @game
     end 
    
     def set_player
@@ -94,8 +100,8 @@ class GamificationController < ApplicationController
 
     def require_player_or_admin
       return unless require_login
-
-      if User.current.admin? || User.current.player?
+      game #to raise error if client cannot connect to Playlyfe game 
+      if (User.current.admin? || User.current.player?)
         return true
       else  
         render_403

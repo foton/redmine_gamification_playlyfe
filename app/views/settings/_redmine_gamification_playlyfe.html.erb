@@ -13,15 +13,19 @@
 </p>
 
 <% if @settings["playlyfe_client_secret"].present? 
-  conn= ::PlaylyfeClient::V2::Connection.new(version: "v2",
-        client_id: @settings["playlyfe_client_id"],
-        client_secret: @settings["playlyfe_client_secret"],
-        type: "client")
-  game=conn.game 
-%>
+      begin
+      conn= ::PlaylyfeClient::V2::Connection.new(version: "v2",
+            client_id: @settings["playlyfe_client_id"],
+            client_secret: @settings["playlyfe_client_secret"],
+            type: "client")
+      game=conn.game 
+    %>
   <p>Game: <%= game.id %> </p>
  
-<% end %>
+    <% rescue %>
+      <p id="errorExplanation">Your settings are not correct! No such client is recognized by Playlyfe.com</p>
+    <% end %>
+ <% end %>
 
 
 
