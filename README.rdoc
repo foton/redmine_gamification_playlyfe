@@ -1,16 +1,12 @@
 = Gamification with Playlyfe
 
-This pluging bind Events in Redmine with Actions in Playlyfe game (N:M).
+This plugin bind Events in Redmine with Actions in Playlyfe game (N:M).
 And Users in Redmine with Players in Playlyfe game (N:1).
 
-<b>You have to setup a client at PlaylyfeClient</b> which can access API (only paid plans) form your backend.
+= Prerequisities
+<b>You have to setup a client at PlaylyfeClient</b> which can access API (only paid plans) from your backend.
 Client should have 'Client Credential Flow' , all checks at config page should be on YES and should have all scopes with RW access.
 
-In configuration page, you can setup these bindings:
-- what actions is triggered when event occurs
-- on behalf which player do selected user actions
-
-And you can play actions directly (only for admins).
 
 = Installation
 
@@ -28,3 +24,10 @@ After the plugin is installed you will need to restart Redmine for the plugin to
 Then go to "Administration" > "Plugins" > "Plugin for gamification using Playlyfe service" : "Configure".
 There you have to set client credentials to Your game at Playlyfe.com. 
 
+= Usage
+
+In configuration page (see top menu), you can setup these bindings:
+- what actions is triggered when event occurs
+- on behalf which player do selected user actions
+
+And you can play actions directly (only for admins).
