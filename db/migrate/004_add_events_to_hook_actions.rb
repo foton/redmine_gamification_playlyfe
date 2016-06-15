@@ -4,7 +4,7 @@ class AddEventsToHookActions < ActiveRecord::Migration
     add_column :hooks_to_actions, :event_name, :string
     change_column :hooks_to_actions, :hook_id, :string, null: true
     
-    add_index :hook_to_actions, :event_source
-    add_index :hook_to_actions, :event_name
+    add_index :hooks_to_actions, :event_source
+    add_index :hooks_to_actions, :event_name
   end
 end

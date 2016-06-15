@@ -17,7 +17,7 @@ module GamificationHelper
   def player_to_link(pl)
     if User.current.admin?
       plink=link_to( pl.name, gamification_player_url(player_id: pl.id))
-    elsif User.current.player.id == pl.id 
+    elsif User.current.player? && User.current.player.id == pl.id 
       plink=link_to(pl.name, gamification_my_scores_url)
     else
       plink=pl.name.html_safe
@@ -57,7 +57,7 @@ module GamificationHelper
     pos.each do |p|
       entity=p[:entity]
       if entity.kind_of?(PlaylyfeClient::Player)
-        entities << ( (current_player.id == entity.id) ? "<strong>#{entity.name}</strong>" : "#{entity.name}" )
+        entities << ( (current_player && (current_player.id == entity.id)) ? "<strong>#{entity.name}</strong>" : "#{entity.name}" )
       else
         entities << ( (current_player && current_player.teams.collect {|t| t.id}.include?(entity.id)) ? "<strong>#{entity.name}</strong>" : "#{entity.name}" )
       end  
