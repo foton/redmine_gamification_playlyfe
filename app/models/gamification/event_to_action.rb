@@ -92,7 +92,7 @@ module Gamification
 
     #comenting issue => creating journal with notes
     def self.process_commented_issue(journal)
-      if journal.notes.strip.present? && !journal.private_notes?
+      if journal.notes.to_s.strip.present? && !journal.private_notes?
         user=User.current
         if user.player?
           EventToAction.for_issues.on_comment.each {|h| h.play_action(user.player)}
