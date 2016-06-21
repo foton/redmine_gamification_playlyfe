@@ -29,6 +29,10 @@ Struct.new("Player", :id, :name, :game, :scores) do
     game.action_played(action.id)
     true
   end  
+
+  def activities
+    []
+  end  
 end  
 
 Struct.new("Action", :id, :name, :game) do

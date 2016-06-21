@@ -3,7 +3,7 @@
 This plugin bind Events in Redmine with Actions in Playlyfe game (N:M).
 And Users in Redmine with Players in Playlyfe game (N:1).
 
-= Prerequisities
+= Prerequisites
 <b>You have to setup a client at PlaylyfeClient</b> which can access API (only paid plans) from your backend.
 Client should have 'Client Credential Flow' , all checks at config page should be on YES and should have all scopes with RW access.
 
@@ -16,7 +16,7 @@ To install the plugin, execute the following commands from the root of your Redm
 
     git clone https://github.com/foton/redmine_gamification_playlyfe.git
 
-    bundle install  
+    bundle install --without development test   #for production use
 
     rake redmine:plugins:migrate RAILS_ENV=production
 

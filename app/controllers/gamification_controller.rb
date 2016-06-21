@@ -30,15 +30,21 @@ class GamificationController < ApplicationController
   end
 
   def play_action
+    status= :ok
     if (set_player && set_action)
-      @player.play(@action)
-      flash[:notice] = t("gamification.play_action.action_successfully_played", action_id: @action.id, player_id: @player.id)
+      begin
+        @player.play(@action)
+        flash[:notice] = t("gamification.play_action.action_successfully_played", action_id: @action.id, player_id: @player.id)
+      rescue PlaylyfeClient::Error => e
+        flash[:error] = e.message
+        status= :unprocessable_entity
+      end  
     end  
     
     load_actions_and_game_players
     @player=no_player if @player.blank?
 
-    render "actions"
+    render "actions", status: status
   end
 
   def configuration

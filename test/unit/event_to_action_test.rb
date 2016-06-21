@@ -5,9 +5,9 @@ class EventToActionTest < ActiveSupport::TestCase
   
   def setup
     User.current=User.find(3)
-    create_player(User.current, "player1")
     @game=fake_game
     stub_game_with(@game)
+    create_player(User.current, "player1")
   end  
 
   def test_play_action
@@ -200,6 +200,11 @@ class EventToActionTest < ActiveSupport::TestCase
     assert_equal played_actions+1, fake_game.actions_played.size
     assert_equal hook2.action_id, fake_game.actions_played.last 
   end
+  
+  def test_on_issue_close_play_action_for_user_and_assigned_user
+    skip
+  end  
+
 
   private
 

@@ -109,6 +109,23 @@ class GamificationControllerTest < ActionController::TestCase
     assert_equal played_actions, @game.actions_played.size
   end
 
+  def test_play_action_with_playlyfe_error #(eg.: second play for "once per day" action)
+    current_user_set_to(:admin)
+    played_actions=@game.actions_played.size
+    
+    #stubbing method
+    pl=@game.players.find("player1")
+    def pl.play(action)
+      raise PlaylyfeClient::ActionRateLimitExceededError.new("{\"error\": \"rate_limit_exceeded\", \"error_description\": \"The Action '#{action.id}' can only be triggered 1 times every day\"}", "") 
+    end  
+
+    post :play_action, {action_id: "issue_commented", player_id: "player1"}
+    
+    assert_response :unprocessable_entity
+    assert_equal "The Action 'issue_commented' can only be triggered 1 times every day [request: ]", flash[:error]
+  end
+
+
   def test_configuration_for_admin
     current_user_set_to(:admin)
     Gamification::EventToAction.create!(event_id: "issue-create", action_id: "issue_created")
