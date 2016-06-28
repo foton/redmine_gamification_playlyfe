@@ -25,7 +25,7 @@ class EventToActionTest < ActiveSupport::TestCase
     event.play_action(player)
 
     assert_equal played_actions+1, fake_game.actions_played.size
-    assert_equal event.action_id, fake_game.actions_played.last 
+    assert_equal event.action_id, fake_game.actions_played.last.first 
   end 
 
   def test_knows_all_event_sources
@@ -118,8 +118,8 @@ class EventToActionTest < ActiveSupport::TestCase
     issue = create_issue
 
     assert_equal played_actions+2, fake_game.actions_played.size
-    assert_equal hook1.action_id, fake_game.actions_played[-2]
-    assert_equal hook2.action_id, fake_game.actions_played.last 
+    assert_equal hook1.action_id, fake_game.actions_played[-2].first
+    assert_equal hook2.action_id, fake_game.actions_played.last.first 
   end
 
   def test_process_event_from_issue_on_update_without_status_change
@@ -136,7 +136,7 @@ class EventToActionTest < ActiveSupport::TestCase
     issue.save!
     
     assert_equal played_actions+1, fake_game.actions_played.size
-    assert_equal hook3.action_id, fake_game.actions_played.last 
+    assert_equal hook3.action_id, fake_game.actions_played.last.first 
   end
 
  def test_process_event_from_issue_on_update_with_status_change
@@ -154,7 +154,7 @@ class EventToActionTest < ActiveSupport::TestCase
     issue.save!
     
     assert_equal played_actions+1, fake_game.actions_played.size
-    assert_equal hook2.action_id, fake_game.actions_played.last 
+    assert_equal hook2.action_id, fake_game.actions_played.last.first 
   end
 
   def test_process_event_from_issue_on_close
@@ -172,11 +172,12 @@ class EventToActionTest < ActiveSupport::TestCase
     issue.save!
     
     assert_equal played_actions+2, fake_game.actions_played.size
-    assert_equal hook4.action_id, fake_game.actions_played[-2]
-    assert_equal hook2.action_id, fake_game.actions_played.last 
+    assert_equal hook4.action_id, fake_game.actions_played[-2].first
+    assert_equal hook2.action_id, fake_game.actions_played.last.first 
+    assert_equal User.current.player.id, fake_game.actions_played.last.last
   end
 
-   def test_process_event_from_issue_on_comment
+  def test_process_event_from_issue_on_comment
      #comment issue is done by creating journal with notes
     stub_game_with(fake_game)
     hook1=create_issue_hook_on(:create, "issue_created")
@@ -198,11 +199,31 @@ class EventToActionTest < ActiveSupport::TestCase
     issue.journals << just_issue_change_info
 
     assert_equal played_actions+1, fake_game.actions_played.size
-    assert_equal hook2.action_id, fake_game.actions_played.last 
+    assert_equal hook2.action_id, fake_game.actions_played.last.first 
   end
   
-  def test_on_issue_close_play_action_for_user_and_assigned_user
-    skip
+  def test_on_issue_close_play_action_for_assigned_user_if_closing_user_is_not_player
+    playing_user=User.current
+    User.current=User.find(4) #nonplayer
+    refute User.current.player?
+
+    stub_game_with(fake_game)
+    hook1=create_issue_hook_on(:create, "issue_created")
+    hook2=create_issue_hook_on(:status_change, "issue_status_change") 
+    hook3=create_issue_hook_on(:other_update, "issue_definition_updated") 
+    hook4=create_issue_hook_on(:close, "issue_closed") #this one will be triggered
+
+    issue = create_issue
+    played_actions=fake_game.actions_played.size
+    assert_equal 1, played_actions
+    
+    issue.status_id=5 #closed
+    issue.assigned_to= playing_user
+    issue.save!
+    
+    assert_equal played_actions+1, fake_game.actions_played.size
+    assert_equal hook4.action_id, fake_game.actions_played.last.first #only CLOSE actions are played
+    assert_equal playing_user.player.id, fake_game.actions_played.last.last
   end  
 
 

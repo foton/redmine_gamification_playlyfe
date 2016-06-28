@@ -4,7 +4,9 @@ cs:
     index: 
       available_actions: "Dostupné akce"
       available_players: "Hráči" 
+      teams: "Týmy"
       refresh_game: "Obnovit celou hru z Playlyfe"  
+
     player:
       for_users: "Pro uživatele"  
       header: "Hráč %{name}"
@@ -17,6 +19,7 @@ cs:
         header: "Úrovně"  
       compounds:
         header: "Další"  
+      average_on_player: "Průměr na člena týmu"
     last_events:
         header: "Poslední události"        
     play_action:

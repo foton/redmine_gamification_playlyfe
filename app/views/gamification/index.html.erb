@@ -3,24 +3,51 @@
 <%= render partial: "shared_links" %>
 
 <div id="game">
-  <div class="left_column">
-    <div id="leaderboards">
-      <% for lb in @leaderboards.to_a do %>
+  
+  <div class="left_column third_width">
+      
+    <div id="team_leaderboards">
+      <% for lb in @leaderboards.for_teams.to_a do %>
         <%= render partial: "leaderboard", locals: {leaderboard: lb} %>
       <% end %>
     </div>
-  </div>
 
-  <div class="right_column">
-    <div id="players">
-    <h3><%= t("gamification.index.available_players") %></h3>
+    <div id="teams">
+      <h3><%= t("gamification.index.teams") %></h3>
       <ul>
-      <% for pl in @game_players.to_a do %>
-        <li><%= player_to_link(pl) %></li>
+      <% for team in @teams.to_a do %>
+        <%= show_team(team) %>
       <% end %>
       </ul>
     </div>
+  </div>
 
+  <div class="left_column third_width">
+
+    <div id="player_leaderboards">
+      <% for lb in @leaderboards.for_players.to_a do %>
+        <%= render partial: "leaderboard", locals: {leaderboard: lb} %>
+      <% end %>
+    </div>
+    
+    <div id="players">
+      <h3><%= t("gamification.index.available_players") %></h3>
+      <ul>
+        <% for pl in @game_players.to_a do %>
+          <li><%= player_to_link(pl) %></li>
+        <% end %>
+      </ul>
+    </div>    
+  </div>
+ 
+  <div class="right_column  third_width">
+
+
+    <div id="events">
+      <h3><%= t("gamification.last_events.header") %></h3>
+      <%= render partial: "events", locals: {events: @game.events(4.days.ago.utc, Time.now.utc), show_actor: true} %>
+    </div>   
+    
     <div id="actions">
       <h3><%= t("gamification.index.available_actions") %></h3>
       <ul>
@@ -30,9 +57,5 @@
       </ul>
     </div>
 
-    <div id="events">
-    <h3><%= t("gamification.last_events.header") %></h3>
-       <%= render partial: "events", locals: {events: @game.events(4.days.ago.utc, Time.now.utc), show_actor: true} %>
-    </div>   
   </div>  
 </div>

@@ -87,6 +87,11 @@ module Gamification
         for scope in get_all_issue_event_scopes(issue)
           EventToAction.for_issues.send(scope).each {|h| h.play_action(user.player)} 
         end
+      elsif issue.assigned_to.player? 
+        #if issue is closed by nonplayer and assignet to player, then actions are played on behalf assigned_to user
+        for scope in (get_all_issue_event_scopes(issue) & [:on_close]) #on close only is this rule applied
+          EventToAction.for_issues.send(scope).each {|h| h.play_action(issue.assigned_to.player)} 
+        end
       end  
     end  
 

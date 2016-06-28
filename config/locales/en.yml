@@ -4,6 +4,7 @@ en:
     index: 
       available_actions: "Available actions"
       available_players: "Available players" 
+      teams: "Teams"
       refresh_game: "Refresh full game from Playlyfe"  
     player:
       for_users: "For users"  
@@ -17,6 +18,7 @@ en:
         header: "States"  
       compounds:
         header: "Other"
+      average_on_player: "Average on team member"  
     last_events:
         header: "Last events"        
     play_action:

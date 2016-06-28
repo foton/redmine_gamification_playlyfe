@@ -10,6 +10,7 @@ class GamificationController < ApplicationController
       Gamification.game=nil #this will force refresh, otherwise game is chached only play_action is doing requests to Playlyfe API
     end  
     load_actions_and_game_players
+    load_teams
     load_leaderboards
   end
       
@@ -188,6 +189,10 @@ class GamificationController < ApplicationController
     def load_actions_and_game_players
       @actions||=game.actions
       @game_players||=game.players
+    end  
+
+    def load_teams
+      @teams||=game.teams
     end  
 
     def load_leaderboards

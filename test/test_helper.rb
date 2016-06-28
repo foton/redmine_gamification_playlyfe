@@ -24,16 +24,31 @@ def stub_game_with(game)
   Gamification.game=game
 end  
 
-Struct.new("Player", :id, :name, :game, :scores) do
+Struct.new("Player", :id, :name, :game ) do
   def play(action)
-    game.action_played(action.id)
+    game.action_played(action.id, self.id)
     true
   end  
 
-  def activities
+  def scores(reload=false)
+    { points: { a: 1 , b: 2}, 
+      sets: { toolbox: [{ name: "hammer", count: 1}, {name: "screwdriver", count: 2}]},
+      states: { rank: "Private"},
+      compounds: {}
+    }
+  end  
+
+  def events(start_time=nil, end_time=nil)
     []
   end  
 end  
+
+Struct.new("Team", :id, :name, :game, :members ) do
+  def events(start_time=nil, end_time=nil)
+    []
+  end  
+end  
+
 
 Struct.new("Action", :id, :name, :game) do
   def rewards
@@ -45,16 +60,32 @@ Struct.new("Collection", :to_a) do
   def find(id)
     to_a.detect {|item| item.id == id}
   end  
+
+  def for_teams
+    for_what(:teams)
+  end
+  
+  def for_players
+    for_what(:players)
+  end  
+
+  def for_what(what)
+    to_a.select {|item| (item.respond_to?(:for) && item.for == what) }
+  end 
 end
 
-Struct.new("Game", :title, :players, :actions, :leaderboards) do
+Struct.new("Game", :title, :players, :actions, :leaderboards, :teams) do
   def actions_played
     @actions_played||=[]
   end
   
-  def action_played(action_id)
-    actions_played << action_id
+  def action_played(action_id, player_id)
+    actions_played << [action_id, player_id]
   end
+
+  def events(start_time=nil, end_time=nil)
+    []
+  end  
 end  
 
 
@@ -74,11 +105,19 @@ def fake_game
       Struct::Action.new("commit_to_repo", "Commit to repository", @fake_game),
     ])
 
-    @fake_game.players=Struct::Collection.new([
-      Struct::Player.new("player1", "Player 1", @fake_game, {}),
-      Struct::Player.new("player2", "Player 2", @fake_game, {}),
-      Struct::Player.new("player3", "Player 3", @fake_game, {}),
+    p1=Struct::Player.new("player1", "Player 1", @fake_game)
+    p2=Struct::Player.new("player2", "Player 2", @fake_game)
+    p3=Struct::Player.new("player3", "Player 3", @fake_game)
+
+    @fake_game.players=Struct::Collection.new([p1,p2,p3])
+
+    @fake_game.teams=Struct::Collection.new([
+      Struct::Team.new("team1", "Team 1", @fake_game, [p1,p2]),
+      Struct::Team.new("team2", "Team 2", @fake_game, []),
+      Struct::Team.new("team3", "Team 3", @fake_game, [p3,p1]),
     ])
+
+    @fake_game.leaderboards=Struct::Collection.new([])
     
   end
   @fake_game  

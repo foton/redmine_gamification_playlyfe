@@ -29,6 +29,14 @@
  float: right;
 }
 
+.float_clearer {
+  clear: both;
+}
+
+.third_width {
+  width: 32%;
+}
+
 #scores table {
    border-collapse: collapse;
 }
@@ -74,4 +82,9 @@
 .event_actor {
   font-weight: bold;
   text-transform: uppercase;
+}
+
+.team_name {
+  margin-right: 1em;
+  font-weight: bold;
 }

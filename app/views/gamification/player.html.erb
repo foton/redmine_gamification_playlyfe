@@ -1,6 +1,7 @@
 <%= stylesheet_link_tag '/gamification.css', plugin: 'redmine_gamification_playlyfe', media: 'screen' %>
 
 <%= render partial: "shared_links" %>
+<% puts("HERE1") %>
 <div class="left_column">
   <h3><%= t("gamification.player.header", name: @player.name) %></h3>
   <div>
@@ -8,10 +9,11 @@
   </div>  
     <%= render partial: "scores", locals: {scores: @player.scores(true)} %>
 </div>
-
+<% puts("HERE2") %>
 <div class="right_column">
   <div id="events">
   <h4><%= t("gamification.last_events.header") %></h4>
     <%= render partial: "events", locals: {events: @player.events(4.days.ago.utc, Time.now.utc), show_actor: false} %>
   </div>  
 </div>
+<% puts("HERE3") %>

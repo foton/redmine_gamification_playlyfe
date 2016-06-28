@@ -28,6 +28,10 @@ class GamificationControllerTest < ActionController::TestCase
     get :index
     assert_response :ok
     assert_template "gamification/index"
+    assert assigns(:game_players).present?
+    assert assigns(:teams).present?
+    assert assigns(:actions).present?
+    assert assigns(:leaderboards).present?
   end
 
   def test_my_scores  
@@ -35,7 +39,7 @@ class GamificationControllerTest < ActionController::TestCase
     get :my_scores
     assert_response :ok
     assert_template "gamification/player"
-    assert assigns(:player).id == 4
+    assert_equal @player.player_id, assigns(:player).id
   end  
 
   def test_player_with_id_for_admin
@@ -43,7 +47,7 @@ class GamificationControllerTest < ActionController::TestCase
     get :player, {player_id: "player2"}
     assert_response :ok
     assert_template "gamification/player"
-    assert assigns(:player).id == 4
+    assert_equal "player2", assigns(:player).id
   end
 
   def test_player_with_not_existing_id_for_admin
@@ -85,7 +89,7 @@ class GamificationControllerTest < ActionController::TestCase
     assert_equal "Action 'issue_commented' was successfully played by player 'player1", flash[:notice]
     assert flash[:error].blank?
     assert_equal played_actions+1, @game.actions_played.size
-    assert_equal "issue_commented", @game.actions_played.last
+    assert_equal "issue_commented", @game.actions_played.last.first
   end
 
   def test_play_action_with_no_player

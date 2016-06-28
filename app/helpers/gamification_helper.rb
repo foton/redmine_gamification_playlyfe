@@ -49,23 +49,53 @@ module GamificationHelper
     options_for_select( ([["-not used-",""]]+ @actions.to_a.collect {|a| [a.name, a.id]}), (action_id || "") )
   end 
 
+  def show_team(team)
+    content_tag(:li) do 
+      concat content_tag(:span, class: "team_name") { team.name }
+      concat (team.members.collect {|tm| tm.name}).join(", ")
+    end
+  end
+
   def show_position(pos, current_player)
     return "" if pos.blank? || !pos.kind_of?(Array)
-
+    
+    if pos.first[:entity].kind_of?(PlaylyfeClient::Team)
+      show_position_for_teams(pos, current_player)
+    else
+      show_position_for_players(pos, current_player)
+    end  
+  end
+  
+  def show_position_for_players(pos, current_player)  
     entities=[]
     
     pos.each do |p|
       entity=p[:entity]
-      if entity.kind_of?(PlaylyfeClient::Player)
-        entities << ( (current_player && (current_player.id == entity.id)) ? "<strong>#{entity.name}</strong>" : "#{entity.name}" )
-      else
-        entities << ( (current_player && current_player.teams.collect {|t| t.id}.include?(entity.id)) ? "<strong>#{entity.name}</strong>" : "#{entity.name}" )
-      end  
+      entities << ( (current_player && (current_player.id == entity.id)) ? "<strong>#{entity.name}</strong>" : "#{entity.name}" )
     end
       
-    "#{entities.join("; ")} [#{pos.first[:score]}]".html_safe
+    score=pos.first[:score]
+    "#{entities.join("; ")} [#{score}]".html_safe
   end  
 
+  def show_position_for_teams(pos, current_player)
+    entities=[]
+    score=pos.first[:score]
+
+    pos.each do |p|
+      entity=p[:entity]
+      e_name= "#{entity.name} [#{average_on_player(entity, score)}]"
+      entities << ( (current_player && current_player.teams.collect {|t| t.id}.include?(entity.id)) ? "<strong>#{e_name}</strong>" : "#{e_name}" )
+    end
+    
+    "#{entities.join("; ")} [#{score}]".html_safe
+  end  
+
+  def average_on_player(team, score)
+    average=(team.members.size == 0 ? 0 : score.to_i/team.members.size)
+    "#{t("gamification.scores.average_on_player")}: #{average}"
+  end
+    
   def admin_area &block
     if User.current.admin?
       yield
