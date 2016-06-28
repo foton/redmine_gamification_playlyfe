@@ -35,7 +35,7 @@ class GamificationControllerTest < ActionController::TestCase
     get :my_scores
     assert_response :ok
     assert_template "gamification/player"
-  #  assert assigns(:player).id == 4
+    assert assigns(:player).id == 4
   end  
 
   def test_player_with_id_for_admin
@@ -43,6 +43,7 @@ class GamificationControllerTest < ActionController::TestCase
     get :player, {player_id: "player2"}
     assert_response :ok
     assert_template "gamification/player"
+    assert assigns(:player).id == 4
   end
 
   def test_player_with_not_existing_id_for_admin

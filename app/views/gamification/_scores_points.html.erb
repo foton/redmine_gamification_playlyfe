@@ -1,0 +1,10 @@
+ <table class="framed_scores">
+    <tbody>
+      <% point_scores.keys.sort.each do |key| %>
+      <tr>
+        <td class="metric_name"><%= key %>:</td>
+        <td id="metric_value"><%= point_scores[key] %></td>
+      </tr>
+     <% end %> 
+    </tbody>  
+  </table>

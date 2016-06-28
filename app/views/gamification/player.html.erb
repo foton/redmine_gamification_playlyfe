@@ -1,14 +1,17 @@
 <%= stylesheet_link_tag '/gamification.css', plugin: 'redmine_gamification_playlyfe', media: 'screen' %>
 
 <%= render partial: "shared_links" %>
-
-<h3><%= @player.name %></h3>
-<div>
-  <%= t("gamification.player.for_users") %>: <%= all_users_for_player(@player) %>
-</div>  
-<div>
-  <%= @player.scores %>
+<div class="left_column">
+  <h3><%= t("gamification.player.header", name: @player.name) %></h3>
+  <div>
+    <%= t("gamification.player.for_users") %>: <%= all_users_for_player(@player) %>
+  </div>  
+    <%= render partial: "scores", locals: {scores: @player.scores(true)} %>
 </div>
-<div>
-  <%= @player.activities %>
+
+<div class="right_column">
+  <div id="events">
+  <h4><%= t("gamification.last_events.header") %></h4>
+    <%= render partial: "events", locals: {events: @player.events(4.days.ago.utc, Time.now.utc), show_actor: false} %>
+  </div>  
 </div>

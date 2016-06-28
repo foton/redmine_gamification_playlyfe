@@ -19,3 +19,14 @@ module Gamification
       end    
   end
 end  
+
+
+
+module PlaylyfeClient
+  class Player 
+    def users
+      User.find(Gamification::UserToPlayer.where(player_id: self.id).pluck(:user_id))
+    end
+    
+  end  
+end    

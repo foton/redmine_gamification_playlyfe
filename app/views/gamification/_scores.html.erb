@@ -1,0 +1,28 @@
+<div id="scores">
+  <table class="framed">
+    <thead>
+      <tr>
+        <th><%= t("gamification.scores.point_counts.header") %></th>
+        <th><%= t("gamification.scores.sets.header") %></th>
+        <th><%= t("gamification.scores.states.header") %></th>
+        <th><%= t("gamification.scores.compounds.header") %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td id="point_counts">
+          <%= render partial: "scores_points", locals: {point_scores: scores[:points]} %>
+        </td>
+        <td id="sets">
+          <%= render partial: "scores_sets", locals: {set_scores: scores[:sets]} %>
+        </td>
+        <td id="states">
+          <%= render partial: "scores_states", locals: {state_scores: scores[:states]} %>
+        </td>
+        <td id="compounds">
+          <%= render partial: "scores_compounds", locals: {compound_scores: scores[:compounds]} %>
+        </td>                
+      </tr>
+    </tbody>  
+  </table>  
+</div>

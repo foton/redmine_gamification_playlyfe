@@ -1,0 +1,12 @@
+ <table class="framed_scores">
+    <tbody>
+      <% set_scores.each_value do |items| %>
+        <% items.each do |item| %>
+          <tr>
+            <td class="metric_name"><%= item[:name] %>:</td>
+            <td id="metric_value"><%= item[:count] %>x</td>
+          </tr>
+        <%end%>
+     <% end %> 
+    </tbody>  
+  </table>

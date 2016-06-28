@@ -1,0 +1,16 @@
+<ul>
+  <% for ev in events.to_a.reverse %>
+    <li class="event">
+      <span class="event_time">[<%= format_time(ev.timestamp) %>]</span>
+      <span class="event_name"><%= ev.event %>: <%= ev.action_name %><%= ev.rule_name %><%= ev.process_name %></span>
+      <br />
+      <span class="event_actor"><%= ev.actor_alias if show_actor %></span>      
+      <ul class="event_changes">
+      <% ev.changes.each do |ch| %>
+        <li><%= ch[:metric].name%>: <%= ch[:delta][2].to_s %> <%= ch[:delta][0].to_s %> => <%= ch[:delta][1].to_s %></li>
+      <% end %>
+      </ul>
+    </li>
+  <% end %>
+</ul>  
+

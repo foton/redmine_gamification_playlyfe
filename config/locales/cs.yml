@@ -7,6 +7,18 @@ cs:
       refresh_game: "Obnovit celou hru z Playlyfe"  
     player:
       for_users: "Pro uživatele"  
+      header: "Hráč %{name}"
+    scores:
+      point_counts:
+        header: "Body"
+      sets:
+        header: "Odznaky"
+      states:
+        header: "Úrovně"  
+      compounds:
+        header: "Další"  
+    last_events:
+        header: "Poslední události"        
     play_action:
       title: "Přímo hrát akce"
       choose_player: "Vyberte hráče na jehož konto se má akce provést"

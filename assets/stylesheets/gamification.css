@@ -14,21 +14,64 @@
  margin-bottom: 2em; 
 }
 
-#leaderboards {
- width: 48%;  
- float:left;
-}
-
-#players {
- width: 48%;  
- float: right;
-}
-
-#actions {
- width: 48%;  
- float: right;
-}
 
 .leaderboard {
  margin-bottom: 2em;  
+}
+
+.left_column {
+ width: 48%;  
+ float: left;
+}
+
+.right_column {
+ width: 48%;  
+ float: right;
+}
+
+#scores table {
+   border-collapse: collapse;
+}
+
+#scores .framed th {
+  border: 1px solid black;
+  padding: 0.5em;
+}
+
+#scores .framed td{
+  border: 1px solid black;
+  padding: 0.5em;
+  vertical-align: top;
+}
+
+#scores .framed_scores {
+  margin-top: 0px;
+}
+
+#scores .framed_scores td {
+  border: 0px solid black;
+  padding: 0.2em;
+}
+
+#events ul {
+  list-style-type: none;
+  list-style-position: inside;
+  padding: 0.3em;
+}
+
+#events ul li {
+  margin-top: 0.2em;
+}
+
+#events ul li.event {
+  margin-bottom: 1em;
+}
+
+.event_name {
+  font-weight: bold;
+}
+
+.event_actor {
+  font-weight: bold;
+  text-transform: uppercase;
 }

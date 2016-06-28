@@ -7,6 +7,18 @@ en:
       refresh_game: "Refresh full game from Playlyfe"  
     player:
       for_users: "For users"  
+      header: "Player %{name}"
+    scores:
+      point_counts:
+        header: "Points"
+      sets:
+        header: "Sets"
+      states:
+        header: "States"  
+      compounds:
+        header: "Other"
+    last_events:
+        header: "Last events"        
     play_action:
       choose_player: "Select player, whom will be play actions"
       available_actions: "Available actions"
