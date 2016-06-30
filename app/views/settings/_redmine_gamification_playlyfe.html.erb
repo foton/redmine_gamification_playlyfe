@@ -11,6 +11,10 @@
 <%= label_tag("settings_playlyfe_client_secret","Playlyfe client SECRET") %>
 <%= text_field_tag "settings[playlyfe_client_secret]", @settings["playlyfe_client_secret"], size: 100 %>
 </p>
+<p>
+<%= label_tag("settings_playlyfe_client_skip_api_calls_limit_exceeded_error","Silently skip over API Calls Limit Exceeded Error") %>
+<%= check_box_tag "settings[playlyfe_client_skip_api_calls_limit_exceeded_error]", 1 , @settings["playlyfe_client_skip_api_calls_limit_exceeded_error"] == "1" %>
+</p>
 
 <% if @settings["playlyfe_client_secret"].present? 
       begin
@@ -21,9 +25,11 @@
       game=conn.game 
     %>
   <p>Game: <%= game.id %> </p>
- 
-    <% rescue %>
-      <p id="errorExplanation">Your settings are not correct! No such client is recognized by Playlyfe.com</p>
+
+    <% rescue PlaylyfeClient::ApiCallsLimitExceededError => e %>
+      <p id="errorExplanation"><%= e.message %></p>
+    <% rescue => e %>
+      <p id="errorExplanation">Your settings are not correct! No such client is recognized by Playlyfe.com. <%= e.message %></p>
     <% end %>
  <% end %>
 
