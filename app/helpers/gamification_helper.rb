@@ -102,5 +102,17 @@ module GamificationHelper
     end  
   end  
 
+  def event_full_name(ev)
+      str=ev.event+":"
+      if ev.kind_of?(PlaylyfeClient::V2::PlayerEvent::Base)
+       str+=" #{ev.action_name} #{ev.rule_name} #{ev.process_name}"
+      elsif ev.kind_of?(PlaylyfeClient::V2::TeamEvent::Base)
+        str+=" #{ev.team_name}"
+      elsif ev.kind_of?(PlaylyfeClient::V2::ProcessEvent::Base)
+        str+=" #{ev.process_name}"
+      end  
+      str
+  end 
+
 
 end

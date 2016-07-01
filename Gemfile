@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem "playlyfe_client", ">=1.1.2"
+gem "playlyfe_client", ">=1.1.3"
 
 group :test, :development do
   gem "pry-byebug"
