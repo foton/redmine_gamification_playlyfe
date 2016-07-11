@@ -54,6 +54,16 @@ Struct.new("Action", :id, :name, :game) do
   def rewards
     []
   end
+
+  def variables
+    []
+  end  
+end
+
+Struct.new("ActionWithVariables", :id, :name, :game, :variables) do
+  def rewards
+    []
+  end
 end
 
 Struct.new("Collection", :to_a) do
@@ -103,6 +113,20 @@ def fake_game
       Struct::Action.new("issue_closed", "Issue closed", @fake_game),
       Struct::Action.new("wiki_updated", "Wiki update", @fake_game),
       Struct::Action.new("commit_to_repo", "Commit to repository", @fake_game),
+      Struct::ActionWithVariables.new("set_a_and_b_to", "Set A and B to new values", @fake_game, [
+                                                                                                    { "default" => 2,
+                                                                                                      "name" => "a_var_int",
+                                                                                                      "required" => true,
+                                                                                                      "type" => "int"
+                                                                                                    },
+                                                                                                    {
+                                                                                                      "default" => "default",
+                                                                                                    "name" => "b_var_str",
+                                                                                                    "required" => false,
+                                                                                                    "type" => "string"
+                                                                                                    }
+
+                                                                                                  ]),
     ])
 
     p1=Struct::Player.new("player1", "Player 1", @fake_game)
