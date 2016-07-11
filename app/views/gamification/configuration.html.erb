@@ -8,6 +8,7 @@
 <%= form_tag(gamification_configuration_update_url, method: :put) do %>
 
   <%= render partial: "event_to_actions_fields" %>  
+  <%= render partial: "actions_with_variables_fields" %>  
   <%= render partial: "users_to_players_fields" %>
 
   <div class="actions">

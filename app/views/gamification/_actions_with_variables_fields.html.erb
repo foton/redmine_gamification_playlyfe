@@ -1,0 +1,29 @@
+  <div id="actions_with_variables">
+    <h3><%= t("gamification.configuration.action_variables_assigments") %></h3>
+    
+    <table>
+      <thead>
+        <tr>
+          <td><%= t("gamification.configuration.action_variable") %></td>
+          <td><%= t("gamification.configuration.evaluating_statetment_to_get_value_of_variable") %></td>
+        </tr>
+      </thead>
+      <tbody>
+      <% @actions_with_variables.each do |action_with_variables| %>
+        <tr><th span="4"><%= action_with_variables.name %></th></tr>
+        <% action_with_variables.variables.each do |var| %>
+          <tr>
+            <td>
+              <%= var["name"] %><%="*" if var["required"] %>
+            </td>
+            <td>
+              <%= text_field_tag("eval") %>
+            </td>  
+          </tr>    
+        <% end %>
+      <% end %>
+      </tbody>
+    </table>
+    * = <%= t("gamification.configuration.required_action_variable") %>
+  </div>  
+

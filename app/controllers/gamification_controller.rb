@@ -58,6 +58,7 @@ class GamificationController < ApplicationController
     @available_event_ids=Gamification::EventToAction.available_event_ids
     @events_to_actions=Gamification::EventToAction.all
     5.times { @events_to_actions << Gamification::EventToAction.new }
+    @actions_with_variables =@actions.to_a.select {|a| !a.variables.empty?}
   end
 
   def configuration_update

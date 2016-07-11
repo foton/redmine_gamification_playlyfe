@@ -1,6 +1,6 @@
 module Gamification
   class EventToAction < ActiveRecord::Base
-    self.table_name="events_to_actions"
+    self.table_name="gamification_events_to_actions"
 
     EVENT_SOURCE_ISSUE="issue"
 
