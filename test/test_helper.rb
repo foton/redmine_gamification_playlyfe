@@ -25,8 +25,8 @@ def stub_game_with(game)
 end  
 
 Struct.new("Player", :id, :name, :game ) do
-  def play(action)
-    game.action_played(action.id, self.id)
+  def play(action,variables={})
+    game.action_played(action.id, self.id, variables)
     true
   end  
 
@@ -85,12 +85,18 @@ Struct.new("Collection", :to_a) do
 end
 
 Struct.new("Game", :title, :players, :actions, :leaderboards, :teams) do
+
+  def variables_passed
+    @variables_passed||=[]
+  end
+    
   def actions_played
     @actions_played||=[]
   end
   
-  def action_played(action_id, player_id)
+  def action_played(action_id, player_id, variables)
     actions_played << [action_id, player_id]
+    variables_passed << variables unless variables.empty?
   end
 
   def events(start_time=nil, end_time=nil)

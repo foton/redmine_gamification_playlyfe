@@ -73,7 +73,7 @@ module Gamification
     #process all hooks attached to Issue creation
     def self.process_created_issue(issue)
       if issue.author.player?
-        EventToAction.for_issues.on_create.each {|h| h.play_action(issue.author.player)}
+        EventToAction.for_issues.on_create.each {|h| h.play_action(issue.author.player, issue)}
       end  
     end
       
@@ -85,12 +85,12 @@ module Gamification
 
       if user.player?
         for scope in get_all_issue_event_scopes(issue)
-          EventToAction.for_issues.send(scope).each {|h| h.play_action(user.player)} 
+          EventToAction.for_issues.send(scope).each {|h| h.play_action(user.player, issue)} 
         end
       elsif issue.assigned_to.kind_of?(User) && issue.assigned_to.player? 
         #if issue is closed by nonplayer and assignet to player, then actions are played on behalf assigned_to user
         for scope in (get_all_issue_event_scopes(issue) & [:on_close]) #on close only is this rule applied
-          EventToAction.for_issues.send(scope).each {|h| h.play_action(issue.assigned_to.player)} 
+          EventToAction.for_issues.send(scope).each {|h| h.play_action(issue.assigned_to.player, issue)} 
         end
       end  
     end  
@@ -100,14 +100,15 @@ module Gamification
       if journal.notes.to_s.strip.present? && !journal.private_notes?
         user=User.current
         if user.player?
-          EventToAction.for_issues.on_comment.each {|h| h.play_action(user.player)}
+          EventToAction.for_issues.on_comment.each {|h| h.play_action(user.player, journal.issue )}
         end  
       end 
     end  
 
-    def play_action(player)
-      player.play(action)
+    def play_action(player, issue)
+      player.play(action,action_variables_hash_for(issue))
     end  
+
 
     scope :for_issues, -> { where(event_source: EVENT_SOURCE_ISSUE) }
     
@@ -118,6 +119,19 @@ module Gamification
     scope :on_close, -> { where(event_name: EVENT_NAME_ON_CLOSE) }
 
     private
+
+      def action_variables
+        ActionVariable.for_action(action)
+      end  
+
+      def action_variables_hash_for(issue)
+        raise "Issue cannot be blank or non Issue object!" unless issue.kind_of?(Issue)
+        h={}
+        for av in action_variables
+          h[av.variable.to_s]=eval(av.eval_string)
+        end  
+        h
+      end  
 
       def validate_event_id
         unless Gamification::EventToAction.available_event_ids.include?(self.event_id)

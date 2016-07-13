@@ -20,7 +20,7 @@ GEM
       minitest (>= 5.0)
       ruby-progressbar
     netrc (0.11.0)
-    playlyfe_client (1.1.1)
+    playlyfe_client (1.1.5)
       json
       jwt
       rest-client
@@ -31,10 +31,10 @@ GEM
     pry-byebug (3.4.0)
       byebug (~> 9.0)
       pry (~> 0.10)
-    rest-client (1.8.0)
+    rest-client (2.0.0)
       http-cookie (>= 1.0.2, < 2.0)
-      mime-types (>= 1.16, < 3.0)
-      netrc (~> 0.7)
+      mime-types (>= 1.16, < 4.0)
+      netrc (~> 0.8)
     ruby-progressbar (1.8.1)
     slop (3.6.0)
     unf (0.1.4)
@@ -46,7 +46,7 @@ PLATFORMS
 
 DEPENDENCIES
   minitest-reporters
-  playlyfe_client (>= 1.1.1)
+  playlyfe_client (>= 1.1.5)
   pry-byebug
 
 BUNDLED WITH

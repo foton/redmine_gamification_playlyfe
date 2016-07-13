@@ -10,7 +10,7 @@ class EventToActionTest < ActiveSupport::TestCase
     create_player(User.current, "player1")
   end  
 
-  def test_play_action
+  def test_play_action_without_variables
     event=Gamification::EventToAction.new(
         {
           event_source: Gamification::EventToAction::EVENT_SOURCE_ISSUE,
@@ -20,12 +20,60 @@ class EventToActionTest < ActiveSupport::TestCase
       )
     stub_game_with(fake_game)
     played_actions=fake_game.actions_played.size
+    variables_passed=fake_game.variables_passed.size
     player=fake_game.players.to_a.first
     
-    event.play_action(player)
+    event.play_action(player, Issue.last)
 
     assert_equal played_actions+1, fake_game.actions_played.size
     assert_equal event.action_id, fake_game.actions_played.last.first 
+    assert_equal variables_passed, fake_game.variables_passed.size , "Variables passed size  is not #{variables_passed}! #{fake_game.variables_passed}"
+  end 
+
+  def test_play_action_with_variables
+    action_id="set_a_and_b_to"
+    event=Gamification::EventToAction.new(
+        {
+          event_source: Gamification::EventToAction::EVENT_SOURCE_ISSUE,
+          event_name: Gamification::EventToAction::EVENT_NAME_ON_CREATE,
+          action_id: action_id
+        }
+      )
+    av=Gamification::ActionVariable.create(action_id: action_id, variable: 'a_var_int', eval_string: 'issue.id/2')
+
+    stub_game_with(fake_game)
+    played_actions=fake_game.actions_played.size
+    variables_passed=fake_game.variables_passed.size
+    player=fake_game.players.to_a.first
+    issue=Issue.last
+    variables_h= {"a_var_int" =>  (issue.id / 2)}
+
+    event.play_action(player,issue)
+
+    assert_equal played_actions+1, fake_game.actions_played.size
+    assert_equal event.action_id, fake_game.actions_played.last.first 
+    assert_equal variables_passed+1, fake_game.variables_passed.size, "Variables passed size is not #{variables_passed+1}! #{fake_game.variables_passed}"
+    assert_equal variables_h, fake_game.variables_passed.last
+
+  end 
+
+   def test_cannot_be_played_without_issue
+    event=Gamification::EventToAction.new(
+        {
+          event_source: Gamification::EventToAction::EVENT_SOURCE_ISSUE,
+          event_name: Gamification::EventToAction::EVENT_NAME_ON_CREATE,
+          action_id: "issue_created"
+        }
+      )
+    stub_game_with(fake_game)
+    player=fake_game.players.to_a.first
+    
+    e=assert_raises(RuntimeError) do
+      event.play_action(player,nil)
+    end
+    assert_equal "Issue cannot be blank or non Issue object!", e.message
+        
+    
   end 
 
   def test_knows_all_event_sources
