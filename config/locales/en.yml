@@ -6,6 +6,7 @@ en:
       available_players: "Available players" 
       teams: "Teams"
       refresh_game: "Refresh full game from Playlyfe"  
+
     player:
       for_users: "For users"  
       header: "Player %{name}"
@@ -22,15 +23,26 @@ en:
     last_events:
         header: "Last events"        
     play_action:
+      title: "Play actions directly"
       choose_player: "Select player, whom will be play actions"
       available_actions: "Available actions"
       action_successfully_played: "Action '%{action_id}' was successfully played by player '%{player_id}"
+    configuration:
+      header: "Binding between Redmine and Playlyfe Game"
+      successfully_updated: "Configuration successfully updated"  
+      event_from_redmine: "Event in Redmine"
+      action_to_play: "will play action in Game"
+      user_from_redmine: "User from Redmine"
+      player_to_link: "plays on players account"
+      more_blank_after_submit: "more blank fileds will appears after form submit"
+      save_configuration_button: "Save configuration"
+      action_variables_assigments: "Getting values for action variables"   
+
     user_to_player:  
       errors:
         player_is_not_in_game: "Player '%{player_id}' is not between Game players!"
         error_on_creating: "Link between user %{user_id} and player %{player_id} cannot be created. Reasons: %{errors}"  
-    configuration:
-      successfully_updated: "Configuration successfully updated"            
+      
     event_to_action:
       event: "Event"
       action: "Action"
@@ -38,3 +50,17 @@ en:
         event_id_is_not_available: "Combination '%{event_id}' is not available/allowed!"  
         action_is_not_in_game: "Action '%{action_id}' is not between actions of Game!"
         error_on_creating: "Link between event %{event_id} and action %{action_id} cannot be created. Reasons: %{errors}"  
+    
+    action_variable:
+      action: "Action"
+      variable: "Variable"     
+      eval_string: "Evaluation formula based on 'issue' to calculate value of variable"
+      required: "Required to play action"
+      errors:
+        action_was_not_found: "Action '%{action_id}' is not between actions of Game!"
+        variable_was_not_found: "Variable with name '%{variable} was not found between variables of action '%{action_id}'!"
+        eval_string_is_empty: "Evaluation formula cannot be empty!"
+        eval_string_is_wrong: "Evaluation of formula '%{eval_string}' applied on issue #%{issue_id} raises exception '%{ex_message}'!"
+        eval_string_returning_wrong_type: "Evaluation of formula '%{eval_string}' applied on issue #%{issue_id} returns '%{result}' with class %{result.class} but expected is %{type}!"
+        error_on_save: "Save of action variable '%{variable}' from '%{action_id}' action with formula '%{eval_string}' was not successfull! Errors: %{errors}"
+

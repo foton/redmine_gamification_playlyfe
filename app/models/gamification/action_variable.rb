@@ -7,6 +7,19 @@ module Gamification
 
     scope :for_action, -> (action) { where(action_id: action.id) }
 
+    def <=>(other_av)
+      v= (self.action_id <=> other_av.action_id)
+      if v == 0
+        v= (self.variable <=> other_av.variable)
+      else
+        v  
+      end  
+    end 
+
+    def should_be_saved?
+      self.eval_string.to_s != ""
+    end  
+
     private
   
       def av_validation
@@ -25,7 +38,7 @@ module Gamification
                 begin
                   result=eval(self.eval_string)
                 rescue Exception => exc #there must be Exception catch, see http://stackoverflow.com/questions/542845/how-to-rescue-an-eval-in-ruby
-                  self.errors.add(:eval_string, I18n.t("gamification.action_variable.errors.eval_string_is_wrong", action_id: self.action_id, variable: variable, eval_string: eval_string, issue_id: issue.id))                
+                  self.errors.add(:eval_string, I18n.t("gamification.action_variable.errors.eval_string_is_wrong", action_id: self.action_id, variable: variable, eval_string: eval_string, issue_id: issue.id, ex_message: exc.message))                
                 end  
                 
                 #eval is ok, but what about the result?

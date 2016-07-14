@@ -13,6 +13,11 @@ class ActionVariableTest < ActiveSupport::TestCase
   def test_can_be_created
     av=Gamification::ActionVariable.new(action_id: @action_id, variable: 'a_var_int', eval_string: 'issue.id')
     assert av.save
+    assert av.required == false
+
+    av=Gamification::ActionVariable.new(action_id: @action_id, variable: 'a_var_int', eval_string: 'issue.id', required: true)
+    assert av.save
+    assert av.required == true
   end  
 
   def test_cannot_be_created_without_action

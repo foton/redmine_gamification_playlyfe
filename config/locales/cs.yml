@@ -36,6 +36,8 @@ cs:
       player_to_link: "hraje za hráče"
       more_blank_after_submit: "další prázdné položky přibudou po odeslání formuláře"
       save_configuration_button: "Uložit konfiguraci"
+      action_variables_assigments: "Nastavování hodnot promměných z akcí"
+    
     user_to_player:  
       errors:
         player_is_not_in_game: "Hráč '%{player_id}' není evidován mezi hráči!"
@@ -48,4 +50,19 @@ cs:
         event_id_is_not_available: "Kombinace '%{event_id}' není v systému povolena!"  
         action_is_not_in_game: "Akce '%{action_id}' není mezi akcemi definovanými ve Hře!"
         error_on_creating: "Propojení události %{event_id} s akcí %{action_id} se nezdařilo kvůli chybám: %{errors}"
+
+    action_variable:
+      action: "Akce"
+      variable: "Proměnná z akce"     
+      eval_string: "Vzorec pro výpočet hodnoty (vztažený k 'issue')"
+      required: "Povinná pro zahrání akce"
+      errors:
+        action_was_not_found: "Akce '%{action_id}' není mezi akcemi definovanými ve Hře!"
+        variable_was_not_found: "Proměnná '%{variable} nebyla nalezena mezi proměnnými akce '%{action_id}'!"
+        eval_string_is_empty: "Vzorec pro výpočet hodnoty nemůže být prázdný!"
+        eval_string_is_wrong: "Vzorec pro výpočet hodnoty '%{eval_string}' použitý na úkolu/issue #%{issue_id} vyhodil vyjímku '%{ex_message}'!"
+        eval_string_returning_wrong_type: "Vzorec pro výpočet hodnoty '%{eval_string}' použitý na úkolu/issue #%{issue_id} vrací '%{result}' s třídou %{result.class}. Očekávána je ale hodnota s třídou %{type}!"
+        error_on_save: "Uložení proměnné '%{variable}' z akce '%{action_id}' se vzorce '%{eval_string}' se nezdařilo kvůli chybám: %{errors}"
+
+
   

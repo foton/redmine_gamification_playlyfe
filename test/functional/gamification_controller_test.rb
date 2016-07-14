@@ -2,7 +2,7 @@ require File.expand_path('../../test_helper', __FILE__)
 
 class GamificationControllerTest < ActionController::TestCase
   tests GamificationController
-  fixtures :users
+  fixtures :users, :issues
 
   def setup
     @game=fake_game
@@ -153,12 +153,18 @@ class GamificationControllerTest < ActionController::TestCase
     assert_equal Gamification::EventToAction.available_event_ids, assigns(:available_event_ids)
     assert assigns(:events_to_actions).present?
     assert_equal Gamification::EventToAction.all, assigns(:events_to_actions)
+
+    assert assigns(:actions_variables).present?
+    all_avs_size=(@game.actions.to_a.select {|a| !a.variables.empty?}).inject(0) {|result, item| result+=item.variables.size}
+    assert_equal all_avs_size, assigns(:actions_variables).to_a.size
   end
 
   def test_configuration_update_new
     current_user_set_to(:admin)
     Gamification::UserToPlayer.delete_all
     assert_equal 0, Gamification::UserToPlayer.count
+    assert_equal 0, Gamification::EventToAction.count
+    assert_equal 0, Gamification::ActionVariable.count
    
     params={
       "users_to_players" => [
@@ -172,13 +178,14 @@ class GamificationControllerTest < ActionController::TestCase
         {"event_id" => "issue-create", "action_id" => "issue_created"},
         {"event_id" => "issue-comment", "action_id" => "issue_commented"},
       ],
+      "action_variables" => {"set_a_and_b_to"=>{"a_var_int"=>"issue.id", "b_var_str"=>""}},
       "commit" => "Save changes"      
     }
         
     put :configuration_update, params
 
     assert_redirected_to gamification_configuration_url
-    assert flash[:error].blank?
+    assert flash[:error].blank?, "Flash[:error] should be blank, but is #{flash[:error]}!"
     
     assert_equal 3, Gamification::UserToPlayer.count
     assert_equal [1], Gamification::UserToPlayer.where(player_id: "player1").pluck(:user_id)
@@ -187,6 +194,11 @@ class GamificationControllerTest < ActionController::TestCase
     assert_equal 2, Gamification::EventToAction.count
     assert_equal 1, Gamification::EventToAction.for_issues.on_create.count
     assert_equal 1, Gamification::EventToAction.for_issues.on_comment.count
+
+    assert_equal 1, Gamification::ActionVariable.count
+    assert_equal "set_a_and_b_to", Gamification::ActionVariable.first.action_id
+    assert_equal "a_var_int", Gamification::ActionVariable.first.variable
+    assert_equal "issue.id", Gamification::ActionVariable.first.eval_string
   end
 
   def test_configuration_update_existing
@@ -208,6 +220,9 @@ class GamificationControllerTest < ActionController::TestCase
     assert_equal 1, Gamification::EventToAction.for_issues.on_create.count
     assert_equal 2, Gamification::EventToAction.for_issues.on_close.count
 
+    av1=Gamification::ActionVariable.create!(action_id: "set_a_and_b_to", variable: "a_var_int", eval_string: "issue.id")
+    assert_equal 1, Gamification::ActionVariable.count
+
     
     params={
       "users_to_players" => [
@@ -222,15 +237,15 @@ class GamificationControllerTest < ActionController::TestCase
         {"event_id" => "issue-comment", "action_id" => "issue_commented"},
         {"event_id" => "issue-close", "action_id" => "issue_closed"},
         {"event_id" => "issue-close", "action_id" => "issue_commented"},
-
       ],
+      "action_variables" => {"set_a_and_b_to"=>{"a_var_int"=>"issue.id+10", "b_var_str"=>"issue.subject"}},
       "commit" => "Save changes"      
     }
         
     put :configuration_update, params
 
     assert_redirected_to gamification_configuration_url
-    assert flash[:error].blank?
+    assert flash[:error].blank?, "Flash[:error] should be blank, but is #{flash[:error]}!"
 
     assert_equal 3, Gamification::UserToPlayer.count
     assert_equal [1], Gamification::UserToPlayer.where(player_id: "player1").pluck(:user_id)
@@ -241,6 +256,17 @@ class GamificationControllerTest < ActionController::TestCase
     assert_equal 1, Gamification::EventToAction.for_issues.on_create.count
     assert_equal 1, Gamification::EventToAction.for_issues.on_comment.count
     assert_equal 2, Gamification::EventToAction.for_issues.on_close.count
+
+    assert_equal 2, Gamification::ActionVariable.count
+    av1_new=Gamification::ActionVariable.find(av1.id)
+    assert_equal "set_a_and_b_to", av1_new.action_id
+    assert_equal "a_var_int", av1_new.variable
+    assert_equal "issue.id+10", av1_new.eval_string 
+
+    av2_new=Gamification::ActionVariable.last
+    assert_equal "set_a_and_b_to", av2_new.action_id
+    assert_equal "b_var_str", av2_new.variable
+    assert_equal "issue.subject", av2_new.eval_string 
   end
 
   def test_get_errors_for_wrong_ids

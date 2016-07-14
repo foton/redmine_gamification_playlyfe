@@ -58,18 +58,21 @@ class GamificationController < ApplicationController
     @available_event_ids=Gamification::EventToAction.available_event_ids
     @events_to_actions=Gamification::EventToAction.all
     5.times { @events_to_actions << Gamification::EventToAction.new }
-    @actions_with_variables =@actions.to_a.select {|a| !a.variables.empty?}
+    @actions_variables=get_action_variables(@actions.to_a.select {|a| !a.variables.empty?})
   end
 
   def configuration_update
     u2p_errors=[]
     e2a_errors=[]
+        
     u2p_errors=update_users_to_players if params["users_to_players"].present?
     e2a_errors=update_events_to_actions if params["events_to_actions"].present?
-    if u2p_errors.blank? && e2a_errors.blank?
+    av_errors=update_action_variables(params["action_variables"])
+
+    if u2p_errors.blank? && e2a_errors.blank? && av_errors.blank?
       flash[:notice]=I18n.t("gamification.configuration.successfully_updated")
     else
-      flash[:error]=(u2p_errors+e2a_errors).join("<br />")
+      flash[:error]=(u2p_errors+e2a_errors+av_errors).join("<br />")
     end  
     redirect_to gamification_configuration_url
   end  
@@ -203,6 +206,49 @@ class GamificationController < ApplicationController
     def no_player
       ::PlaylyfeClient::V2::Player.new({id: 0, alias: "----"},game)
     end  
+
+    def get_action_variables(actions)
+      avs=Gamification::ActionVariable.order("action_id ASC, variable ASC").to_a
+      actions.each do |action_with_variables| 
+        action_with_variables.variables.each do |var| 
+          stored_av=avs.detect {|av| av.action_id == action_with_variables.id && av.variable == var["name"]}
+          if stored_av.nil?
+            avs << Gamification::ActionVariable.new(action_id: action_with_variables.id, variable: var["name"], eval_string: '', required: var["required"])
+          end  
+        end
+      end    
+      avs.sort
+    end  
+
+     def update_action_variables(av_params)
+
+      errors=[]
+      return errors if av_params.blank?
+
+      existing_avs=Gamification::ActionVariable.order("action_id ASC, variable ASC").to_a
+
+      av_params.each_key do |action_id|
+        av_params[action_id].keys.each do |variable|
+          stored_av=existing_avs.detect {|av| av.action_id == action_id && av.variable == variable}
+          
+          if stored_av.nil?
+            s_av= Gamification::ActionVariable.new(action_id: action_id, variable: variable, eval_string: av_params[action_id][variable])
+          else  
+            stored_av.eval_string= av_params[action_id][variable]
+            s_av= stored_av
+          end  
+          
+          if s_av.should_be_saved?
+            unless s_av.save
+              errors << I18n.t("gamification.action_variable.errors.error_on_save", action_id: action_id, variable: variable, eval_string: av_params[action_id][variable], errors: s_av.errors.full_messages.join("; "))
+            end  
+          end
+
+        end
+      end  
+
+      errors
+    end 
 
 end  
 

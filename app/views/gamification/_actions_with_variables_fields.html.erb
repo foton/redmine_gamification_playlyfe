@@ -4,26 +4,21 @@
     <table>
       <thead>
         <tr>
-          <td><%= t("gamification.configuration.action_variable") %></td>
-          <td><%= t("gamification.configuration.evaluating_statetment_to_get_value_of_variable") %></td>
+          <th><%= t("gamification.action_variable.action") %></td>
+          <th><%= t("gamification.action_variable.variable") %></td>
+          <th><%= t("gamification.action_variable.eval_string") %></td>
         </tr>
       </thead>
       <tbody>
-      <% @actions_with_variables.each do |action_with_variables| %>
-        <tr><th span="4"><%= action_with_variables.name %></th></tr>
-        <% action_with_variables.variables.each do |var| %>
-          <tr>
-            <td>
-              <%= var["name"] %><%="*" if var["required"] %>
-            </td>
-            <td>
-              <%= text_field_tag("eval") %>
-            </td>  
-          </tr>    
-        <% end %>
+      <% @actions_variables.each do |av| %>
+        <tr>
+          <td><%= av.action_id %>
+          <td><%= av.variable %><%="*" if av.required?%></td>
+          <td><%= text_field_tag("action_variables[#{av.action_id}][#{av.variable}]", av.eval_string) %></td>  
+        </tr>    
       <% end %>
       </tbody>
     </table>
-    * = <%= t("gamification.configuration.required_action_variable") %>
+    * = <%= t("gamification.action_variable.required") %>
   </div>  
 
